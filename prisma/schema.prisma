@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource mysqldb {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model chunks {
+  id         String    @id @db.VarChar(36)
+  content    String    @db.Text
+  attribute  Json
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+}
+
+model content_items {
+  id          String    @id @db.VarChar(36)
+  content     String    @db.Text
+  chunk_id    String    @db.VarChar(36)
+  rect_info   Json
+  origin_info Json
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at  DateTime? @db.Timestamp(0)
+}
