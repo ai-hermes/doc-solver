@@ -20,6 +20,9 @@ Standalone question:`;
 const QA_TEMPLATE = `You are an expert researcher. Use the following pieces of context to answer the question at the end.
 If you don't know the answer, just say you don't know. DO NOT try to make up an answer.
 If the question is not related to the context or chat history, politely respond that you are tuned to only answer questions that are related to the context.
+If the question is use Chinese,use Chinese language to answer it.
+If the question is use English,use English language to answer it.
+Respond in the same language as the question asked.
 
 <context>
   {context}
