@@ -54,6 +54,16 @@ jobs:
         with:
           path: ./.next
           name: next_out
+      - name: Upload static to cos
+        uses: TencentCloud/cos-action@v1
+        with:
+          secret_id: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
+          secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
+          cos_bucket: ${{ secrets.COS_BUCKET }}
+          cos_region: ${{ secrets.COS_REGION }}
+          local_path: .next/static
+          remote_path: doc-solver/_next/static
+          clean: true
   build-image:
     needs: build
     runs-on: ubuntu-latest
@@ -93,7 +103,7 @@ jobs:
               VERSION=${GITHUB_REF#refs/tags/v}
             fi
             echo "IMAGE_TAG=${VERSION}" >> $GITHUB_ENV
-      - name: Build dev branch and push
+      - name: Build image and push
         uses: docker/build-push-action@v4
         with:
             context: .
