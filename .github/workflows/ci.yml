@@ -15,7 +15,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-env:
+# env:
 #   API_KEY: ${{ secrets.API_KEY }}
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
