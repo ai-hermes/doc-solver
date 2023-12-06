@@ -23,7 +23,7 @@ COPY .next/static ./.next/static
 RUN chown -R nextjs:nodejs .
 
 USER nextjs
-
+RUN npm install sharp -S
 EXPOSE 3000
 
 ENV PORT 3000
