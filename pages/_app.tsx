@@ -10,7 +10,6 @@ import '@/components/ui/react-pdf-highlighter/style/MouseSelection.css';
 import '@/components/ui/react-pdf-highlighter/style/pdf_viewer.css';
 import '@/components/ui/react-pdf-highlighter/style/PdfHighlighter.css';
 import '@/components/ui/react-pdf-highlighter/style/Tip.css';
-
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
