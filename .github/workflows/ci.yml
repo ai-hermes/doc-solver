@@ -55,6 +55,7 @@ jobs:
           path: ./.next
           name: next_out
   build-image:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
