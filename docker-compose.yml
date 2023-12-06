@@ -4,7 +4,7 @@ services:
     # build: .
     image: "warjiang/doc-solver:canary"
     # command: ["./scripts/bootstrap.sh"]
-    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+    entrypoint: ["/bin/bash", "-c","./scripts/bootstrap.sh"]
     cap_add:
     - SYS_PTRACE
     security_opt:

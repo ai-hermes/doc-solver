@@ -24,7 +24,9 @@ COPY scripts ./scripts
 RUN chown -R nextjs:nodejs .
 
 USER nextjs
-RUN npm install sharp @prisma/client -S && \
+RUN apt update && \
+    apt install -y netcat && \
+    npm install sharp @prisma/client -S && \
     npx prisma generate
     
 EXPOSE 3000
