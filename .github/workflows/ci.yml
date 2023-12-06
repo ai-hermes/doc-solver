@@ -65,6 +65,8 @@ jobs:
         with:
           name: next_out
           path: ./.next
+      - name: Unzip Artifact
+        run: tar xf ./.next/artifact.tar -C ./.next
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:
