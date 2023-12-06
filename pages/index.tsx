@@ -1,3 +1,4 @@
+import React from 'react';
 import { useRef, useState, useEffect } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
@@ -14,11 +15,11 @@ import {
 } from '@/components/ui/accordion';
 
 import PdfComponent from '@/components/ui/pdf'
-import { cn} from '@/utils/cn'
+import { cn } from '@/utils/cn'
 import { useAtom } from 'jotai';
 import { hightlightAtom } from '@/components/ui/pdf/store'
 // import { v4 as uuidv4 } from 'uuid';
-import {IHighlight} from '@/components/ui/react-pdf-highlighter/types'
+import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
 export default function Home() {
 
@@ -144,7 +145,7 @@ export default function Home() {
       chunk_id: string;
       content: string;
       origin_info: Record<string, any>;
-      pageNumber:number;
+      pageNumber: number;
       rect_info: {
         x1: number;
         x2: number;
@@ -186,7 +187,7 @@ export default function Home() {
     <>
       <Layout>
         <div className="w-full mx-auto flex flex-col gap-4">
-          
+
           <div className="grid grid-cols-8 gap-2 ">
             <div className='col-span-4 '>
               <PdfComponent />
