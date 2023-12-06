@@ -3,7 +3,7 @@ name: Check NextJs build
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches
+    branches:
     - main
     - master
     - feature/*
