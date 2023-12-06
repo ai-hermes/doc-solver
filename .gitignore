@@ -43,5 +43,5 @@ next-env.d.ts
 .vscode
 docs/
 # demos
-package-lock.json
+# package-lock.json
 yarn.lock
