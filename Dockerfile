@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18.19.0-buster AS base
 
 # Production image, copy all the files and run next
 FROM base AS runner

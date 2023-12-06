@@ -14,7 +14,8 @@ services:
     environment:
     - TZ=Asia/Shanghai
     volumes:
-    - ./scripts:/app/scripts
+    # - ./scripts:/app/scripts
+    - .env:/app/.env
     depends_on:
     - mysql
     networks:
