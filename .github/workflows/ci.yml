@@ -1,0 +1,106 @@
+name: Check NextJs build
+
+on:
+  push:
+    branches:
+    - main
+    - master
+    - feature/*
+env:
+  IMAGE_TAG: canary
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+            if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+              echo "manager=yarn" >> $GITHUB_OUTPUT
+              echo "command=install" >> $GITHUB_OUTPUT
+              echo "runner=yarn" >> $GITHUB_OUTPUT
+              exit 0
+            elif [ -f "${{ github.workspace }}/package.json" ]; then
+              echo "manager=npm" >> $GITHUB_OUTPUT
+              echo "command=ci" >> $GITHUB_OUTPUT
+              echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+              exit 0
+            else
+              echo "Unable to determine package manager"
+              exit 1
+            fi
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+            path: |
+              .next/cache
+            key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+            restore-keys: |
+                ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Build with Next.js
+        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./.next
+          name: next_out
+  build-image:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: next_out
+          path: ./.next
+      - name: Unzip Artifact
+        run: tar xf ./.next/artifact.tar -C ./.next
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+  
+      - name: Set up docker buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+
+      - name: Login to Github Package
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{secrets.GH_USER}}
+          password: ${{secrets.GH_PASSWORD}}
+
+      - name: Get tags
+        id: get-tags
+        run: |
+            VERSION=canary
+            if [[ $GITHUB_REF == refs/tags/* ]]; then
+              VERSION=${GITHUB_REF#refs/tags/v}
+            fi
+            echo "IMAGE_TAG=${VERSION}" >> $GITHUB_ENV
+      - name: Build dev branch and push
+        uses: docker/build-push-action@v4
+        with:
+            context: .
+            # platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+            platforms: linux/amd64
+            push: true
+            tags: |
+              ghcr.io/ai-hermes/doc-solver:${{ env.IMAGE_TAG }}
+            cache-from: type=gha
+            cache-to: type=gha,mode=max

@@ -43,6 +43,7 @@
     "react-pdf": "^7.5.1",
     "react-pdf-highlighter": "^6.1.0",
     "react-rnd": "^10.1.10",
+    "sharp": "^0.33.0",
     "tailwind-merge": "^1.10.0"
   },
   "devDependencies": {
