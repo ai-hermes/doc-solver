@@ -1,0 +1,33 @@
+name: Deploy doc-solver to server
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'specify tag of image to deploy'     
+        required: true
+        default: 'canary'
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: ssh deploy
+        uses: easingthemes/ssh-deploy@v4.1.10
+        with:
+          # Private key part of an SSH key pair
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Remote host
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          # Remote user
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
+          # SOURCE: "/dist/"
+          # Script to run on host machine after rsync
+          SCRIPT_AFTER: |
+            docker pull warjiang/doc-solver:${{ github.event.inputs.imageTag }}
+            cd /home/tiger/doc-solver
+            docker compose rm -f -s -v web
+            docker compose up -d web
