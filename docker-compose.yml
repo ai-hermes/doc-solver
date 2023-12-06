@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  web:
+    # build: .
+    image: "warjiang/doc-solver:canary"
+    # command: ["./scripts/bootstrap.sh"]
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+    cap_add:
+    - SYS_PTRACE
+    security_opt:
+    - "seccomp:unconfined"
+    ports:
+    - "3000:3000"
+    environment:
+    - TZ=Asia/Shanghai
+    volumes:
+    - ./scripts:/app/scripts
+    depends_on:
+    - mysql
+    networks:
+    - doc-solver
+
+  mysql:
+    environment:
+    - MYSQL_ROOT_PASSWORD=A74yJikLWdwp
+    - TZ=Asia/Shanghai
+    image: "mysql:8.0.32"
+    ports:
+    - "3306:3306"
+    volumes:
+    # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./mysql-data:/var/lib/mysql
+    networks:
+    - doc-solver
+
+
+networks:
+  doc-solver:

@@ -20,10 +20,13 @@ RUN mkdir .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY .next/standalone ./
 COPY .next/static ./.next/static
+COPY scripts ./scripts
 RUN chown -R nextjs:nodejs .
 
 USER nextjs
-RUN npm install sharp -S
+RUN npm install sharp @prisma/client -S && \
+    npx prisma generate
+    
 EXPOSE 3000
 
 ENV PORT 3000
