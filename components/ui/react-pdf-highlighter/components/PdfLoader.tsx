@@ -3,7 +3,6 @@ import React, { Component } from "react";
 // import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf";
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import pdf from "pdf-parse/lib/pdf-parse.js";
 
 interface Props {
   /** See `GlobalWorkerOptionsType`. */
@@ -52,7 +51,7 @@ export class PdfLoader extends Component<Props, State> {
     }
   }
 
-  componentDidCatch(error: Error, info?: any) {
+  componentDidCatch(error: Error) {
     const { onError } = this.props;
     if (onError) {
       onError(error);
@@ -83,7 +82,7 @@ export class PdfLoader extends Component<Props, State> {
           cMapUrl,
           cMapPacked,
         }).promise.then(async (pdfDocument) => {
-          console.log('pdfDocument', pdfDocument  )
+          console.log('pdfDocument', pdfDocument)
           this.setState({ pdfDocument });
         });
       })

@@ -28,6 +28,19 @@ export abstract class BufferLoader extends BaseDocumentLoader {
   }
 }
 
+async function PDFLoaderImports() {
+  try {
+    // the main entrypoint has some debug code that we don't want to import
+    const { default: pdf } = await import('pdf-parse/lib/pdf-parse.js');
+    return { pdf };
+  } catch (e) {
+    console.error(e);
+    throw new Error(
+      'Failed to load pdf-parse. Please install it with eg. `npm install pdf-parse`.',
+    );
+  }
+}
+
 export class CustomPDFLoader extends BufferLoader {
   public async parse(
     raw: Buffer,
@@ -47,15 +60,3 @@ export class CustomPDFLoader extends BufferLoader {
   }
 }
 
-async function PDFLoaderImports() {
-  try {
-    // the main entrypoint has some debug code that we don't want to import
-    const { default: pdf } = await import('pdf-parse/lib/pdf-parse.js');
-    return { pdf };
-  } catch (e) {
-    console.error(e);
-    throw new Error(
-      'Failed to load pdf-parse. Please install it with eg. `npm install pdf-parse`.',
-    );
-  }
-}

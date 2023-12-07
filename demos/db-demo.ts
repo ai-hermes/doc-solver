@@ -18,6 +18,7 @@ async function main() {
     const chuncks = generateChunks(items)
     // await prisma.chunks.
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const promises: Array<Promise<any>> = []
     chuncks.forEach((chuck, index) => {
         const puuid = uuidv4();
@@ -48,11 +49,11 @@ async function main() {
 
             promises.push(p)
         })
-        
-        
+
+
     })
 
-    const ids = await Promise.all(promises)
+    // const ids = await Promise.all(promises)
     console.log('finished')
 }
 

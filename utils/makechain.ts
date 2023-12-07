@@ -1,6 +1,4 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { ConversationalRetrievalQAChain } from 'langchain/chains';
 import { chatBaseCfg, extraCfg } from '@/config/openai';
 import { ChatPromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';

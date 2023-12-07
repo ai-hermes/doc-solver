@@ -1,4 +1,4 @@
-import fs from 'fs';
+// import fs from 'fs';
 /*
 !!node-canvas not support for macos m2 chip
 TODO make a self hosted machine

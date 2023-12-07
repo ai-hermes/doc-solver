@@ -10,6 +10,7 @@ import { prisma } from '@/utils/prisma';
 import _ from 'lodash';
 import { JsonObject } from '@prisma/client/runtime/library';
 
+/* eslint-disable max-lines-per-function */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -77,7 +78,7 @@ export default async function handler(
 
     const sourceDocuments = await documentPromise;
     const uuids = sourceDocuments.map(d => d.metadata['uuid']).filter(Boolean);
-    let hs = await prisma.content_items.findMany({
+    const hs = await prisma.content_items.findMany({
       select: {
         rect_info: true,
         content: true,
@@ -91,7 +92,7 @@ export default async function handler(
       }
     })
     const hsWithPageNumber = hs.map(h => {
-      const pageNumber = (h.origin_info as JsonObject)?.['pageNumber'] as Number;
+      const pageNumber = (h.origin_info as JsonObject)?.['pageNumber'] as number;
       return {
         ...h,
         pageNumber,
@@ -106,8 +107,10 @@ export default async function handler(
     })
     console.log('response', response);
     // , highlight: hs
-    res.status(200).json({ text: response, sourceDocuments:sourceDocumentsWithHs });
-  } catch (error: any) {
+    res.status(200).json({ text: response, sourceDocuments: sourceDocumentsWithHs });
+  }
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  catch (error: any) {
     console.log('error', error);
     res.status(500).json({ error: error.message || 'Something went wrong' });
   }

@@ -13,7 +13,7 @@ const pageNum = 1;
     console.log('pageWidth', pageWidth, 'pageHeight', pageHeight);
 
 
-    const viewport = page.getViewport();
+    // const viewport = page.getViewport();
     const content = await page.getTextContent();
     const hs = content.items.map((item) => {
         // console.log(item)
@@ -23,14 +23,14 @@ const pageNum = 1;
         let width = item.width / pageWidth;
         let height = item.height / pageHeight;
         */
-       let x1 = item.transform[4] ;
-    //    let y1 = item.transform[5];
-       let y1 = (pageHeight - item.transform[5]) - item.height ;
-       let x2 = (item.transform[4] + item.width) ;
-       let y2 = y1 + item.height;
-       let width = pageWidth ;
-       let height = pageHeight // 注意 y1 > y2
-    //    console.log(viewport.convertToViewportRectangle(x1, y1, x2, y2))
+        let x1 = item.transform[4];
+        //    let y1 = item.transform[5];
+        let y1 = (pageHeight - item.transform[5]) - item.height;
+        let x2 = (item.transform[4] + item.width);
+        let y2 = y1 + item.height;
+        let width = pageWidth;
+        let height = pageHeight // 注意 y1 > y2
+        //    console.log(viewport.convertToViewportRectangle(x1, y1, x2, y2))
         return {
             content: {
                 text: item.str,
@@ -42,7 +42,7 @@ const pageNum = 1;
             comment: 'xxxx',
         }
     })
-    console.log(JSON.stringify(hs[4],null, 4))
+    console.log(JSON.stringify(hs[4], null, 4))
     // console.log(JSON.stringify(hs, null, 4))
     /*
     const loadingTask = getDocument(pdfPath);
