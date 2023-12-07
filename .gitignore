@@ -45,3 +45,4 @@ docs/
 # demos
 # package-lock.json
 yarn.lock
+mysql-data
