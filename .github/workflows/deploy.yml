@@ -25,6 +25,8 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
           # SOURCE: "/dist/"
+          # The target directory
+          TARGET: "/tmp/doc-server"
           # Script to run on host machine after rsync
           SCRIPT_AFTER: |
             docker pull warjiang/doc-solver:${{ github.event.inputs.imageTag }}
