@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18.19.0-buster AS base
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -20,10 +20,17 @@ RUN mkdir .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY .next/standalone ./
 COPY .next/static ./.next/static
+COPY scripts ./scripts
 RUN chown -R nextjs:nodejs .
+
+RUN apt update && \
+    apt install -y netcat
 
 USER nextjs
 
+RUN npm install sharp @prisma/client -S && \
+    npx prisma generate
+    
 EXPOSE 3000
 
 ENV PORT 3000
