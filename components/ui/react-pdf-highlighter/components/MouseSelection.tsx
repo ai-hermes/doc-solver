@@ -68,6 +68,7 @@ class MouseSelection extends Component<Props, State> {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
 
     const { onSelection, onDragStart, onDragEnd, shouldStart } = this.props;

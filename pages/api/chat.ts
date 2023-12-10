@@ -10,7 +10,6 @@ import { prisma } from '@/utils/prisma';
 import _ from 'lodash';
 import { JsonObject } from '@prisma/client/runtime/library';
 
-/* eslint-disable max-lines-per-function */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,

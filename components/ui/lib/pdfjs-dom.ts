@@ -1,15 +1,20 @@
 import { Page } from "../types";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getDocument = (elm: any): Document =>
   (elm || {}).ownerDocument || document;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getWindow = (elm: any): typeof window =>
   (getDocument(elm) || {}).defaultView || window;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isHTMLElement = (elm: any) =>
   elm instanceof HTMLElement || elm instanceof getWindow(elm).HTMLElement;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isHTMLCanvasElement = (elm: any) =>
   elm instanceof HTMLCanvasElement ||
   elm instanceof getWindow(elm).HTMLCanvasElement;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const asElement = (x: any): HTMLElement => x;
 
 /**

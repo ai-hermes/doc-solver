@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // import "pdfjs-dist/web/pdf_viewer.css";
 // import "../style/pdf_viewer.css";
 // import "../style/PdfHighlighter.css";
@@ -187,9 +189,9 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
 
     this.linkService.setDocument(pdfDocument);
     this.linkService.setViewer(this.viewer);
-    if(this.viewer && pdfDocument) {
+    if (this.viewer && pdfDocument) {
       this.viewer.setDocument(pdfDocument)
-    } 
+    }
     // this.viewer !== null && this.viewer.setDocument(pdfDocument);
     // debug
     (window as any).PdfViewer = this;

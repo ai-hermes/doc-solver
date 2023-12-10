@@ -109,7 +109,6 @@ function extractPageNums(chuncks: PdfItem[]) {
 
 const minContentLen = 1000;
 
-/* eslint-disable max-lines-per-function */
 export function generateChunks(pdfItem: Array<PdfItem>) {
   const lines: Array<PdfItem> = [];
   let tmp = [];

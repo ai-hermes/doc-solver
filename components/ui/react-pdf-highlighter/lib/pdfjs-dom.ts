@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Page } from "../types";
 
 export const getDocument = (elm: any): Document =>

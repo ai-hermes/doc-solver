@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { viewportToScaled } from "../lib/coordinates";
 import React from "react";
 import {

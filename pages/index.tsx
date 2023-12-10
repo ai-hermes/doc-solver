@@ -140,12 +140,12 @@ export default function Home() {
   const updateHash = (highlight: IHighlight) => {
     document.location.hash = `highlight-${highlight.id}`;
   };
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   type HightlightDocument = Document<Record<string, any>> & {
     highlight: Array<{
       chunk_id: string;
       content: string;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       origin_info: Record<string, any>;
       pageNumber: number;
       rect_info: {

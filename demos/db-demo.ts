@@ -18,7 +18,7 @@ async function main() {
     const chuncks = generateChunks(items)
     // await prisma.chunks.
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const promises: Array<Promise<any>> = []
     chuncks.forEach((chuck, index) => {
         const puuid = uuidv4();
