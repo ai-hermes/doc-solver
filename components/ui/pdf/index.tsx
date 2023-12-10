@@ -7,9 +7,9 @@ const PdfLoader = dynamic(() => import('../react-pdf-highlighter/components/PdfL
 const PdfHighlighter = dynamic(() => import('../react-pdf-highlighter/components/PdfHighlighter'), {
     ssr: false
 })
-const Tip = dynamic(() => import('../react-pdf-highlighter/components/Tip'), {
-    ssr: false
-})
+// const Tip = dynamic(() => import('../react-pdf-highlighter/components/Tip'), {
+//     ssr: false
+// })
 const Highlight = dynamic(() => import('../react-pdf-highlighter/components/Highlight'), {
     ssr: false
 })
@@ -55,38 +55,38 @@ const PRIMARY_PDF_URL = "https://savemoney.spotty.com.cn/poems/raft.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 const initialUrl = PRIMARY_PDF_URL;
-const mockHighlights = [
-    {
-        "id": "111",
-        "content": {
-            "text": "In Search of an Understandable Consensus Algorithm"
-        },
-        "position": {
-            "boundingRect": {
-                "x1": 111.23999786376953,
-                "y1": 74.5650405883789,
-                "x2": 508.1391906738281,
-                "y2": 113.62065124511719,
-                "width": 612,
-                "height": 792,
-                "pageNumber": 1
-            },
-            "rects": [
-                {
-                    "x1": 111.23999786376953,
-                    "y1": 74.5650405883789,
-                    "x2": 508.1391906738281,
-                    "y2": 113.62065124511719,
-                    "width": 612,
-                    "height": 792,
-                    "pageNumber": 1
-                }
-            ],
-            pageNumber: 1,
-        },
-    }
-]
-class App extends Component<{highlights: IHighlight[]}, State> {
+// const mockHighlights = [
+//     {
+//         "id": "111",
+//         "content": {
+//             "text": "In Search of an Understandable Consensus Algorithm"
+//         },
+//         "position": {
+//             "boundingRect": {
+//                 "x1": 111.23999786376953,
+//                 "y1": 74.5650405883789,
+//                 "x2": 508.1391906738281,
+//                 "y2": 113.62065124511719,
+//                 "width": 612,
+//                 "height": 792,
+//                 "pageNumber": 1
+//             },
+//             "rects": [
+//                 {
+//                     "x1": 111.23999786376953,
+//                     "y1": 74.5650405883789,
+//                     "x2": 508.1391906738281,
+//                     "y2": 113.62065124511719,
+//                     "width": 612,
+//                     "height": 792,
+//                     "pageNumber": 1
+//                 }
+//             ],
+//             pageNumber: 1,
+//         },
+//     }
+// ]
+class App extends Component<{ highlights: IHighlight[] }, State> {
     state = {
         url: initialUrl,
         highlights: [] as IHighlight[],
@@ -109,11 +109,11 @@ class App extends Component<{highlights: IHighlight[]}, State> {
         });
     };
 
-    scrollViewerTo = (highlight: any) => { };
+    scrollViewerTo = (highlight: IHighlight) => { };
 
     scrollToHighlightFromHash = () => {
         const highlight = this.getHighlightById(parseIdFromHash());
-debugger
+        debugger
         if (highlight) {
             this.scrollViewerTo(highlight);
         }
@@ -154,7 +154,7 @@ debugger
         });
     }
 
-    updateHighlight(highlightId: string, position: Object, content: Object) {
+    updateHighlight(highlightId: string, position: object, content: object) {
         console.log("Updating highlight", highlightId, position, content);
 
         this.setState({
@@ -188,10 +188,10 @@ debugger
                     // width: "75vw",
                     position: "relative",
                 }}
-            > 
+            >
                 <PdfLoader url={url} beforeLoad={<Spinner />} >
                     {(pdfDocument) => {
-                        
+
                         return (
                             <PdfHighlighter
                                 pdfDocument={pdfDocument}
@@ -271,6 +271,6 @@ debugger
 
 const AppWrapper = () => {
     const highlights = useAtomValue(hightlightAtom)
-    return <App highlights={highlights}/>
+    return <App highlights={highlights} />
 }
 export default AppWrapper;

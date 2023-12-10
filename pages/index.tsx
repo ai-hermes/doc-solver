@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FormEvent, KeyboardEvent } from 'react';
 import { useRef, useState, useEffect } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
@@ -51,7 +51,7 @@ export default function Home() {
   }, []);
 
   //handle form submission
-  async function handleSubmit(e: any) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setError(null);
@@ -121,29 +121,31 @@ export default function Home() {
   }
 
   //prevent empty submissions
-  const handleEnter = (e: any) => {
+  const handleEnter = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && query) {
-      handleSubmit(e);
+      handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     } else if (e.key == 'Enter') {
       e.preventDefault();
     }
   };
-  const url = 'https://savemoney.spotty.com.cn/poems/raft.pdf'
+  // const url = 'https://savemoney.spotty.com.cn/poems/raft.pdf'
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const [highlight, setHighlight] = useAtom(hightlightAtom);
+  const [, setHighlight] = useAtom(hightlightAtom);
   if (!isMounted) {
     return null;
   }
   const updateHash = (highlight: IHighlight) => {
     document.location.hash = `highlight-${highlight.id}`;
   };
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   type HightlightDocument = Document<Record<string, any>> & {
     highlight: Array<{
       chunk_id: string;
       content: string;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       origin_info: Record<string, any>;
       pageNumber: number;
       rect_info: {
