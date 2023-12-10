@@ -57,7 +57,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^5.54.0",
+    "@typescript-eslint/parser": "^6.13.2",
     "autoprefixer": "^10.4.13",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
