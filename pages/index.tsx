@@ -21,6 +21,10 @@ import { hightlightAtom } from '@/components/ui/pdf/store'
 // import { v4 as uuidv4 } from 'uuid';
 import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
+
+import { SSE } from 'sse.js';
+import type { SSEvent, ReadyStateEvent } from 'sse.js';
+import { extractSSEData } from '@/utils/sse';
 export default function Home() {
 
   const [query, setQuery] = useState<string>('');
@@ -50,8 +54,12 @@ export default function Home() {
     textAreaRef.current?.focus();
   }, []);
 
+  const [response, setResponse] = useState("");
+  const responseRef = useRef(response);
+
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    /*
     e.preventDefault();
 
     setError(null);
@@ -118,7 +126,134 @@ export default function Home() {
       setError('An error occurred while fetching the data. Please try again.');
       console.log('error', error);
     }
+    */
+    e.preventDefault();
+
+    setError(null);
+
+    if (!query) {
+      alert('Please input a question');
+      return;
+    }
+
+    const question = query.trim();
+    const source = new SSE('/api/chat', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: "POST",
+      payload: JSON.stringify({
+        question,
+        history,
+      }),
+    })
+    setResponse('')
+    responseRef.current = ''
+    setMessageState((state) => ({
+      ...state,
+      messages: [
+        ...state.messages,
+        {
+          type: 'userMessage',
+          message: question,
+        },
+      ],
+    }));
+    setLoading(true);
+    setQuery('');
+    setMessageState((state) => {
+      return {
+        ...state,
+        messages: [
+          ...state.messages,
+          {
+            type: 'apiMessage',
+            message: response,
+            sourceDocs: [],
+          },
+        ],
+        history: [...state.history, [query, response]],
+      }
+    });
+    source.addEventListener('readystatechange', (e: ReadyStateEvent) => {
+      console.log("ReadyState: ", e.readyState);
+      // setShouldNewLine(true)
+      
+    })
+    source.addEventListener('message', (e: SSEvent) => {
+      console.log("Message: ", e.data);
+      if (e.data == "[DONE]") {
+        // setConversationContext((prev) => [...prev, response]);
+        setLoading(false);
+        source.close()
+        //scroll to bottom
+        messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+        return;
+      }
+      const { data, isSSEData } = extractSSEData(e.data)
+      if (!isSSEData) {
+        setLoading(false)
+        source.close()
+        //scroll to bottom
+        messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+        return
+      }
+      const objectsArray = data.map(item => JSON.parse(item))
+      if (objectsArray && !!objectsArray[0].type ) {
+        if(objectsArray[0].type === 'msg') {
+          responseRef.current += objectsArray[0].msg
+          setResponse(responseRef.current)
+        } else if(objectsArray[0].type === 'hs') {
+          setMessageState((state) => {
+            let { messages = [] } = state
+            if (messages.length !== 0) {
+              messages = [
+                ...messages.slice(0, messages.length - 1),
+                {
+                  ...messages[messages.length - 1],
+                  sourceDocs: objectsArray[0].highlights,
+                },
+              ]
+            }
+            return {
+              ...state,
+              messages,
+            }
+          })
+        }
+        // setLoading(false)
+      }
+    })
+    source.stream()
   }
+
+  useEffect(() => {
+    if (!response) return
+    setMessageState((state) => {
+      let { messages = [], history = [] } = state
+      if (messages.length !== 0) {
+        messages = [
+          ...messages.slice(0, messages.length - 1),
+          {
+            type: 'apiMessage',
+            message: response,
+            sourceDocs: [],
+          },
+        ]
+      }
+      if (history.length !== 0) {
+        history = [
+          ...history.slice(0, history.length - 1),
+          [query, response]
+        ]
+      }
+      return {
+        ...state,
+        messages,
+        history,
+      }
+    });
+  }, [response])
 
   //prevent empty submissions
   const handleEnter = (e: KeyboardEvent<HTMLTextAreaElement>) => {

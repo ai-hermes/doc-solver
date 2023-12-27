@@ -14,6 +14,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Content-Encoding', 'none');
+
   const { question, history } = req.body;
 
   console.log('question', question);
@@ -69,11 +74,25 @@ export default async function handler(
       .join('\n');
     console.log(pastMessages);
 
+    /*
     //Ask a question using chat history
     const response = await chain.invoke({
       question: sanitizedQuestion,
       chat_history: pastMessages,
     });
+    */
+    const qaRespStream = await chain.stream({
+      question: sanitizedQuestion,
+      chat_history: pastMessages,
+    })
+    for await (const chunk of qaRespStream) {
+      res.write(`data: ${JSON.stringify({
+        type: 'msg',
+        msg: chunk,
+      })}\n\n`);
+    }
+    
+
 
     const sourceDocuments = await documentPromise;
     const uuids = sourceDocuments.map(d => d.metadata['uuid']).filter(Boolean);
@@ -104,9 +123,15 @@ export default async function handler(
         highlight: groupedHs[s.metadata['uuid']]
       }
     })
-    console.log('response', response);
+    res.write(`data: ${JSON.stringify({
+      type: 'hs',
+      highlights: sourceDocumentsWithHs,
+    })}\n\n`);
+    res.write(`data: [DONE]\n\n`);
+    res.end()
+    // console.log('response', response);
     // , highlight: hs
-    res.status(200).json({ text: response, sourceDocuments: sourceDocumentsWithHs });
+    // res.status(200).json({ text: response, sourceDocuments: sourceDocumentsWithHs });
   }
   /* eslint-disable @typescript-eslint/no-explicit-any */
   catch (error: any) {
