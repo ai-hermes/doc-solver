@@ -25,8 +25,8 @@ import MD5 from 'crypto-js/md5';
 import { SSE } from 'sse.js';
 import type { SSEvent, ReadyStateEvent } from 'sse.js';
 import { extractSSEData } from '@/utils/sse';
+import { Typewriter } from '@/utils/typewriter';
 export default function Home() {
-
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +56,16 @@ export default function Home() {
 
   const [response, setResponse] = useState("");
   const responseRef = useRef(response);
+
+  const [typeWriter] = useState(() => {
+    const t = new Typewriter((delta) => {
+      console.log(delta)
+      responseRef.current += delta
+      console.log()
+      setResponse(responseRef.current)
+    })
+    return t;
+  })
 
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -147,6 +157,7 @@ export default function Home() {
         history,
       }),
     })
+    typeWriter.start()
     setResponse('')
     responseRef.current = ''
     setMessageState((state) => ({
@@ -167,12 +178,12 @@ export default function Home() {
         messages: [
           ...state.messages,
           {
-            type: 'apiMessage',
-            message: response,
+            type: 'apiMessage' as Message['type'],
+            message: '',
             sourceDocs: [],
           },
         ],
-        history: [...state.history, [query, response]],
+        history: [...state.history, [query, '']],
       }
     });
     source.addEventListener('readystatechange', (e: ReadyStateEvent) => {
@@ -181,19 +192,25 @@ export default function Home() {
       
     })
     source.addEventListener('message', (e: SSEvent) => {
-      console.log("Message: ", e.data);
+      // console.log("Message: ", e.data);
       if (e.data == "[DONE]") {
         // setConversationContext((prev) => [...prev, response]);
+        // setResponse('')
+        // responseRef.current = ''
         setLoading(false);
         source.close()
+        typeWriter.done()
         //scroll to bottom
         messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
         return;
       }
       const { data, isSSEData } = extractSSEData(e.data)
       if (!isSSEData) {
+        // setResponse('')
+        // responseRef.current = ''
         setLoading(false)
         source.close()
+        typeWriter.done()
         //scroll to bottom
         messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
         return
@@ -201,9 +218,11 @@ export default function Home() {
       const objectsArray = data.map(item => JSON.parse(item))
       if (objectsArray && !!objectsArray[0].type ) {
         if(objectsArray[0].type === 'msg') {
-          responseRef.current += objectsArray[0].msg
-          setResponse(responseRef.current)
+          // responseRef.current += objectsArray[0].msg
+          // setResponse(responseRef.current)
+          typeWriter.add(objectsArray[0].msg)
         } else if(objectsArray[0].type === 'hs') {
+          // console.log('set hs', objectsArray[0].highlights)
           setMessageState((state) => {
             let { messages = [] } = state
             if (messages.length !== 0) {
@@ -235,9 +254,10 @@ export default function Home() {
         messages = [
           ...messages.slice(0, messages.length - 1),
           {
+            ...messages[messages.length - 1],
             type: 'apiMessage',
             message: response,
-            sourceDocs: [],
+            // sourceDocs: [],
           },
         ]
       }
