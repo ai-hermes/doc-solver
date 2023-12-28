@@ -21,8 +21,13 @@ import { hightlightAtom } from '@/components/ui/pdf/store'
 // import { v4 as uuidv4 } from 'uuid';
 import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
-export default function Home() {
 
+import { SSE } from 'sse.js';
+import type { SSEvent } from 'sse.js';
+import { extractSSEData } from '@/utils/sse';
+import { Typewriter } from '@/utils/typewriter';
+import { useBrowserLanguage } from '@/utils/useBrowserLanguage';
+export default function Home() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +55,17 @@ export default function Home() {
     textAreaRef.current?.focus();
   }, []);
 
+  const [response, setResponse] = useState("");
+  const responseRef = useRef(response);
+
+  const [typeWriter] = useState(() => {
+    const t = new Typewriter((delta) => {
+      responseRef.current += delta
+      setResponse(responseRef.current)
+    })
+    return t;
+  })
+  const language =  useBrowserLanguage()
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,7 +78,21 @@ export default function Home() {
     }
 
     const question = query.trim();
-
+    const source = new SSE('/api/chat', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: "POST",
+      payload: JSON.stringify({
+        question,
+        history,
+        language
+      }),
+    })
+    // clear and start consume data from sse stream
+    typeWriter.start()
+    setResponse('')
+    responseRef.current = ''
     setMessageState((state) => ({
       ...state,
       messages: [
@@ -73,52 +103,98 @@ export default function Home() {
         },
       ],
     }));
-
     setLoading(true);
     setQuery('');
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question,
-          history,
-        }),
-      });
-      const data = await response.json();
-      console.log('data', data);
-
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setMessageState((state) => ({
-          ...state,
-          messages: [
-            ...state.messages,
-            {
-              type: 'apiMessage',
-              message: data.text,
-              sourceDocs: data.sourceDocuments,
-            },
-          ],
-          history: [...state.history, [question, data.text]],
-        }));
+    setMessageState((state) => {
+      return {
+        ...state,
+        messages: [
+          ...state.messages,
+          {
+            type: 'apiMessage' as Message['type'],
+            message: '',
+            sourceDocs: [],
+          },
+        ],
+        history: [...state.history, [query, '']],
       }
-      console.log('messageState', messageState);
-
-      setLoading(false);
-
-      //scroll to bottom
-      messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
-    } catch (error) {
-      setLoading(false);
-      setError('An error occurred while fetching the data. Please try again.');
-      console.log('error', error);
-    }
+    });
+    
+    source.addEventListener('message', (e: SSEvent) => {
+      // console.log("Message: ", e.data);
+      if (e.data == "[DONE]") {
+        setLoading(false);
+        source.close()
+        typeWriter.done()
+        //scroll to bottom
+        messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+        return;
+      }
+      const { data, isSSEData } = extractSSEData(e.data)
+      if (!isSSEData) {
+        setLoading(false)
+        source.close()
+        typeWriter.done()
+        messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+        return
+      }
+      const objectsArray = data.map(item => JSON.parse(item))
+      if (objectsArray && !!objectsArray[0].type ) {
+        // ref: only two type data, one is msg, another is hs
+        // msg: pages/api/chat.ts:L80, which means the response is a text message, generate by llm
+        // hs:  pages/api/chat.ts:L118, represents highligh area in the pdf, when click the source, it'll highlight the area of pdf and scroll to the highlight area
+        if(objectsArray[0].type === 'msg') {
+          typeWriter.add(objectsArray[0].msg)
+        } else if(objectsArray[0].type === 'hs') {
+          setMessageState((state) => {
+            let { messages = [] } = state
+            if (messages.length !== 0) {
+              messages = [
+                ...messages.slice(0, messages.length - 1),
+                {
+                  ...messages[messages.length - 1],
+                  sourceDocs: objectsArray[0].highlights,
+                },
+              ]
+            }
+            return {
+              ...state,
+              messages,
+            }
+          })
+        }
+      }
+    })
+    source.stream()
   }
+
+  useEffect(() => {
+    if (!response) return
+    setMessageState((state) => {
+      let { messages = [], history = [] } = state
+      if (messages.length !== 0) {
+        messages = [
+          ...messages.slice(0, messages.length - 1),
+          {
+            ...messages[messages.length - 1],
+            type: 'apiMessage',
+            message: response,
+          },
+        ]
+      }
+      if (history.length !== 0) {
+        history = [
+          ...history.slice(0, history.length - 1),
+          [query, response]
+        ]
+      }
+      return {
+        ...state,
+        messages,
+        history,
+      }
+    });
+  }, [response])
 
   //prevent empty submissions
   const handleEnter = (e: KeyboardEvent<HTMLTextAreaElement>) => {
