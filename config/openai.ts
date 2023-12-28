@@ -19,6 +19,7 @@ if (EMBEDDING_BATCHSIZE) {
 const chatBaseCfg: ChatOpenAIType = {
     modelName: CHAT_MODEL_NAME,
     temperature: 0,
+    // verbose: true,
 }
 
 const extraCfg = {

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Document } from 'langchain/document';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { makeChain } from '@/utils/makechain';
+import { genlangPrompt, makeChain } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME } from '@/config/pinecone';
 import { embeddingBaseCfg, extraCfg } from '@/config/openai';
@@ -19,7 +19,7 @@ export default async function handler(
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('Content-Encoding', 'none');
 
-  const { question, history } = req.body;
+  const { question, history, language = "english" } = req.body;
 
   console.log('question', question);
   console.log('history', history);
@@ -84,6 +84,7 @@ export default async function handler(
     const qaRespStream = await chain.stream({
       question: sanitizedQuestion,
       chat_history: pastMessages,
+      language: genlangPrompt(language),
     })
     for await (const chunk of qaRespStream) {
       res.write(`data: ${JSON.stringify({

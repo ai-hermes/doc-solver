@@ -26,6 +26,7 @@ import { SSE } from 'sse.js';
 import type { SSEvent, ReadyStateEvent } from 'sse.js';
 import { extractSSEData } from '@/utils/sse';
 import { Typewriter } from '@/utils/typewriter';
+import { useBrowserLanguage } from '@/utils/useBrowserLanguage';
 export default function Home() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,7 +67,7 @@ export default function Home() {
     })
     return t;
   })
-
+  const language =  useBrowserLanguage()
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     /*
@@ -155,6 +156,7 @@ export default function Home() {
       payload: JSON.stringify({
         question,
         history,
+        language
       }),
     })
     typeWriter.start()
