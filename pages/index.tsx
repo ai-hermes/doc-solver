@@ -23,7 +23,7 @@ import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
 
 import { SSE } from 'sse.js';
-import type { SSEvent, ReadyStateEvent } from 'sse.js';
+import type { SSEvent } from 'sse.js';
 import { extractSSEData } from '@/utils/sse';
 import { Typewriter } from '@/utils/typewriter';
 import { useBrowserLanguage } from '@/utils/useBrowserLanguage';

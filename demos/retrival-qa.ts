@@ -3,7 +3,6 @@ import { ChatPromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';
 import { StringOutputParser } from 'langchain/schema/output_parser';
 import type { Document } from 'langchain/document';
-import type { VectorStoreRetriever } from 'langchain/vectorstores/base';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { pinecone } from '@/utils/pinecone-client';
