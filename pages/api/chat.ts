@@ -21,9 +21,6 @@ export default async function handler(
 
   const { question, history, language = "english" } = req.body;
 
-  console.log('question', question);
-  console.log('history', history);
-
   //only accept post requests
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -74,13 +71,6 @@ export default async function handler(
       .join('\n');
     console.log(pastMessages);
 
-    /*
-    //Ask a question using chat history
-    const response = await chain.invoke({
-      question: sanitizedQuestion,
-      chat_history: pastMessages,
-    });
-    */
     const qaRespStream = await chain.stream({
       question: sanitizedQuestion,
       chat_history: pastMessages,

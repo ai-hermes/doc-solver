@@ -1,6 +1,7 @@
+/**
+ * extra SSE JSON data from raw string, return the data and whether it is SSE data
+ */
 const JSONObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g
-
-
 export function extractSSEData(data: string): {
     data: Array<string>;
     isSSEData: boolean;

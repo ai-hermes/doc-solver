@@ -60,9 +60,7 @@ export default function Home() {
 
   const [typeWriter] = useState(() => {
     const t = new Typewriter((delta) => {
-      console.log(delta)
       responseRef.current += delta
-      console.log()
       setResponse(responseRef.current)
     })
     return t;
@@ -70,74 +68,6 @@ export default function Home() {
   const language =  useBrowserLanguage()
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    /*
-    e.preventDefault();
-
-    setError(null);
-
-    if (!query) {
-      alert('Please input a question');
-      return;
-    }
-
-    const question = query.trim();
-
-    setMessageState((state) => ({
-      ...state,
-      messages: [
-        ...state.messages,
-        {
-          type: 'userMessage',
-          message: question,
-        },
-      ],
-    }));
-
-    setLoading(true);
-    setQuery('');
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question,
-          history,
-        }),
-      });
-      const data = await response.json();
-      console.log('data', data);
-
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setMessageState((state) => ({
-          ...state,
-          messages: [
-            ...state.messages,
-            {
-              type: 'apiMessage',
-              message: data.text,
-              sourceDocs: data.sourceDocuments,
-            },
-          ],
-          history: [...state.history, [question, data.text]],
-        }));
-      }
-      console.log('messageState', messageState);
-
-      setLoading(false);
-
-      //scroll to bottom
-      messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
-    } catch (error) {
-      setLoading(false);
-      setError('An error occurred while fetching the data. Please try again.');
-      console.log('error', error);
-    }
-    */
     e.preventDefault();
 
     setError(null);
@@ -159,6 +89,7 @@ export default function Home() {
         language
       }),
     })
+    // clear and start consume data from sse stream
     typeWriter.start()
     setResponse('')
     responseRef.current = ''
@@ -188,17 +119,10 @@ export default function Home() {
         history: [...state.history, [query, '']],
       }
     });
-    source.addEventListener('readystatechange', (e: ReadyStateEvent) => {
-      console.log("ReadyState: ", e.readyState);
-      // setShouldNewLine(true)
-      
-    })
+    
     source.addEventListener('message', (e: SSEvent) => {
       // console.log("Message: ", e.data);
       if (e.data == "[DONE]") {
-        // setConversationContext((prev) => [...prev, response]);
-        // setResponse('')
-        // responseRef.current = ''
         setLoading(false);
         source.close()
         typeWriter.done()
@@ -208,23 +132,20 @@ export default function Home() {
       }
       const { data, isSSEData } = extractSSEData(e.data)
       if (!isSSEData) {
-        // setResponse('')
-        // responseRef.current = ''
         setLoading(false)
         source.close()
         typeWriter.done()
-        //scroll to bottom
         messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
         return
       }
       const objectsArray = data.map(item => JSON.parse(item))
       if (objectsArray && !!objectsArray[0].type ) {
+        // ref: only two type data, one is msg, another is hs
+        // msg: pages/api/chat.ts:L80, which means the response is a text message, generate by llm
+        // hs:  pages/api/chat.ts:L118, represents highligh area in the pdf, when click the source, it'll highlight the area of pdf and scroll to the highlight area
         if(objectsArray[0].type === 'msg') {
-          // responseRef.current += objectsArray[0].msg
-          // setResponse(responseRef.current)
           typeWriter.add(objectsArray[0].msg)
         } else if(objectsArray[0].type === 'hs') {
-          // console.log('set hs', objectsArray[0].highlights)
           setMessageState((state) => {
             let { messages = [] } = state
             if (messages.length !== 0) {
@@ -242,7 +163,6 @@ export default function Home() {
             }
           })
         }
-        // setLoading(false)
       }
     })
     source.stream()
@@ -259,7 +179,6 @@ export default function Home() {
             ...messages[messages.length - 1],
             type: 'apiMessage',
             message: response,
-            // sourceDocs: [],
           },
         ]
       }
