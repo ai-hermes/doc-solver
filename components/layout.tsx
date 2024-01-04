@@ -1,5 +1,5 @@
 import React from 'react';
-
+import SessionProvider from "@/components/ui/provider/session-provider";
 interface LayoutProps {
   children?: React.ReactNode;
 }
@@ -21,6 +21,7 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </main>
       </div>
+      <SessionProvider />
     </div>
   );
 }

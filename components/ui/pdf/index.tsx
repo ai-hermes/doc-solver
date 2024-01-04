@@ -113,7 +113,7 @@ class App extends Component<{ highlights: IHighlight[] }, State> {
 
     scrollToHighlightFromHash = () => {
         const highlight = this.getHighlightById(parseIdFromHash());
-        debugger
+        // debugger
         if (highlight) {
             this.scrollViewerTo(highlight);
         }

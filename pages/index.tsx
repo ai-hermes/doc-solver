@@ -21,7 +21,11 @@ import { hightlightAtom } from '@/components/ui/pdf/store'
 // import { v4 as uuidv4 } from 'uuid';
 import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
+
+import { usePathname } from 'next/navigation'
+import { createBrowserClient } from "@supabase/ssr";
 export default function Home() {
+  const pathname = usePathname();
 
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -185,9 +189,22 @@ export default function Home() {
     setHighlight(mappedHighlight)
     updateHash(mappedHighlight[0])
   }
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  const handleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: location.origin + "/auth/callback?next=" + pathname,
+      }
+    });
+  }
   return (
     <>
       <Layout>
+        <div onClick={handleLogin}>login</div>
         <div className="w-full mx-auto flex flex-col gap-4">
 
           <div className="grid grid-cols-8 gap-2 ">

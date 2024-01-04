@@ -23,6 +23,8 @@
     "@pinecone-database/pinecone": "1.1.0",
     "@prisma/client": "^5.6.0",
     "@radix-ui/react-accordion": "^1.1.1",
+    "@supabase/ssr": "^0.0.10",
+    "@supabase/supabase-js": "^2.39.1",
     "@vercel/postgres": "^0.5.1",
     "clsx": "^1.2.1",
     "compromise": "^14.10.1",
@@ -44,7 +46,8 @@
     "react-pdf-highlighter": "^6.1.0",
     "react-rnd": "^10.1.10",
     "sharp": "^0.33.0",
-    "tailwind-merge": "^1.10.0"
+    "tailwind-merge": "^1.10.0",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
