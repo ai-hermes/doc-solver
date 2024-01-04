@@ -82,7 +82,7 @@ export class PdfLoader extends Component<Props, State> {
           cMapUrl,
           cMapPacked,
         }).promise.then(async (pdfDocument) => {
-          console.log('pdfDocument', pdfDocument)
+          // console.log('pdfDocument', pdfDocument)
           this.setState({ pdfDocument });
         });
       })

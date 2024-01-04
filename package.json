@@ -47,7 +47,8 @@
     "react-rnd": "^10.1.10",
     "sharp": "^0.33.0",
     "tailwind-merge": "^1.10.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "sse.js": "^2.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",

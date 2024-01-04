@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Document } from 'langchain/document';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { makeChain } from '@/utils/makechain';
+import { genlangPrompt, makeChain } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME } from '@/config/pinecone';
 import { embeddingBaseCfg, extraCfg } from '@/config/openai';
@@ -14,10 +14,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Content-Encoding', 'none');
 
-  console.log('question', question);
-  console.log('history', history);
+  const { question, history, language = "english" } = req.body;
 
   //only accept post requests
   if (req.method !== 'POST') {
@@ -69,11 +71,19 @@ export default async function handler(
       .join('\n');
     console.log(pastMessages);
 
-    //Ask a question using chat history
-    const response = await chain.invoke({
+    const qaRespStream = await chain.stream({
       question: sanitizedQuestion,
       chat_history: pastMessages,
-    });
+      language: genlangPrompt(language),
+    })
+    for await (const chunk of qaRespStream) {
+      res.write(`data: ${JSON.stringify({
+        type: 'msg',
+        msg: chunk,
+      })}\n\n`);
+    }
+    
+
 
     const sourceDocuments = await documentPromise;
     const uuids = sourceDocuments.map(d => d.metadata['uuid']).filter(Boolean);
@@ -104,9 +114,15 @@ export default async function handler(
         highlight: groupedHs[s.metadata['uuid']]
       }
     })
-    console.log('response', response);
+    res.write(`data: ${JSON.stringify({
+      type: 'hs',
+      highlights: sourceDocumentsWithHs,
+    })}\n\n`);
+    res.write(`data: [DONE]\n\n`);
+    res.end()
+    // console.log('response', response);
     // , highlight: hs
-    res.status(200).json({ text: response, sourceDocuments: sourceDocumentsWithHs });
+    // res.status(200).json({ text: response, sourceDocuments: sourceDocumentsWithHs });
   }
   /* eslint-disable @typescript-eslint/no-explicit-any */
   catch (error: any) {
