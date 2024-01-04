@@ -34,6 +34,69 @@ services:
     networks:
     - doc-solver
 
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: semitechnologies/weaviate:1.23.0
+    ports:
+    - 8080:8080
+    - 50051:50051
+    volumes:
+    - weaviate_data:/var/lib/weaviate
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'node1'
+    networks:
+      - doc-solver
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: vectoradmin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vdbms
+    networks:
+      - doc-solver
+      
+  vector-admin:
+    container_name: vector-admin
+    image: vector-admin:latest
+    platform: linux/amd64
+    # build:
+    #   context: ../.
+    #   dockerfile: ./docker/Dockerfile
+    volumes:
+      - "./demos/vector-admin/.env:/app/backend/.env"
+      - "./demos/vector-admin/backend/storage:/app/backend/storage"
+      - "./demos/vector-admin/document-processor/hotdir/:/app/document-processor/hotdir"
+    ports:
+      - "3001:3001"
+      - "3355:3355"
+      - "8288:8288"
+    env_file:
+      - ./demos/vector-admin/.env
+    networks:
+      - doc-solver
+    depends_on:
+      - postgres
+
+volumes:
+  weaviate_data:
+  postgres_data:
 
 networks:
   doc-solver:
