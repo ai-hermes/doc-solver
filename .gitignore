@@ -46,3 +46,4 @@ docs/
 # package-lock.json
 yarn.lock
 mysql-data
+demos/vector-admin

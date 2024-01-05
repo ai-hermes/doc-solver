@@ -93,10 +93,24 @@ services:
       - doc-solver
     depends_on:
       - postgres
+      
+  redis:
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --requirepass docsolver123456
+    networks:
+      - doc-solver
+
+
 
 volumes:
   weaviate_data:
   postgres_data:
+  redis-data:
 
 networks:
   doc-solver:
