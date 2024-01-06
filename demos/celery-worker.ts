@@ -22,3 +22,5 @@ worker.register("tasks.add", (a: number, b: number) => {
 
 worker.start();
 */
+
+export {}
