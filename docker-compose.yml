@@ -1,25 +1,25 @@
 version: "3.9"
 services:
-  web:
-    # build: .
-    image: "warjiang/doc-solver:canary"
-    # command: ["./scripts/bootstrap.sh"]
-    entrypoint: ["/bin/bash", "-c","./scripts/bootstrap.sh"]
-    cap_add:
-    - SYS_PTRACE
-    security_opt:
-    - "seccomp:unconfined"
-    ports:
-    - "3000:3000"
-    environment:
-    - TZ=Asia/Shanghai
-    volumes:
-    # - ./scripts:/app/scripts
-    - .env:/app/.env
-    depends_on:
-    - mysql
-    networks:
-    - doc-solver
+  # web:
+  #   # build: .
+  #   image: "warjiang/doc-solver:canary"
+  #   # command: ["./scripts/bootstrap.sh"]
+  #   entrypoint: ["/bin/bash", "-c","./scripts/bootstrap.sh"]
+  #   cap_add:
+  #   - SYS_PTRACE
+  #   security_opt:
+  #   - "seccomp:unconfined"
+  #   ports:
+  #   - "3000:3000"
+  #   environment:
+  #   - TZ=Asia/Shanghai
+  #   volumes:
+  #   # - ./scripts:/app/scripts
+  #   - .env:/app/.env
+  #   depends_on:
+  #   - mysql
+  #   networks:
+  #   - doc-solver
 
   mysql:
     environment:
@@ -30,7 +30,7 @@ services:
     - "3306:3306"
     volumes:
     # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    - ./mysql-data:/var/lib/mysql
+    - ./demos/data/mysql-data:/var/lib/mysql
     networks:
     - doc-solver
 
@@ -47,7 +47,7 @@ services:
     - 8080:8080
     - 50051:50051
     volumes:
-    - weaviate_data:/var/lib/weaviate
+    - ./demos/data/weaviate-data:/var/lib/weaviate
     restart: on-failure:0
     environment:
       QUERY_DEFAULTS_LIMIT: 25
@@ -100,17 +100,17 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - ./demos/data/redis-data:/data
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
 
 
 
-volumes:
-  weaviate_data:
-  postgres_data:
-  redis-data:
+# volumes:
+#   weaviate_data:
+#   postgres_data:
+#   redis-data:
 
 networks:
   doc-solver:

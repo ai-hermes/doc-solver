@@ -47,3 +47,4 @@ docs/
 yarn.lock
 mysql-data
 demos/vector-admin
+demos/data
