@@ -28,8 +28,15 @@ import type { SSEvent } from 'sse.js';
 import { extractSSEData } from '@/utils/sse';
 import { Typewriter } from '@/utils/typewriter';
 import { useBrowserLanguage } from '@/utils/useBrowserLanguage';
+import { useUser } from "@/lib/store/user";
+
 export default function Home() {
   const pathname = usePathname();
+
+  const user = useUser((state) => state.user);
+  const setUser = useUser((state) => state.setUser);
+
+  console.log(user, "current user");
 
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -272,16 +279,22 @@ export default function Home() {
     await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: location.origin + "/auth/callback?next=" + pathname,
+        redirectTo: location.origin + "/api/auth?next=" + pathname,
       }
     });
   }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(undefined);
+  };
+
   return (
     <>
       <Layout>
         <div onClick={handleLogin}>login</div>
+        <div onClick={handleLogout}>logout</div>
         <div className="w-full mx-auto flex flex-col gap-4">
-
           <div className="grid grid-cols-8 gap-2 ">
             <div className='col-span-4 '>
               <PdfComponent />
