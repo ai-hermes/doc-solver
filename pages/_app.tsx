@@ -1,5 +1,5 @@
 import React from 'react';
-import '@/styles/base.css';
+import '@/styles/global.css';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 import "pdfjs-dist/web/pdf_viewer.css";

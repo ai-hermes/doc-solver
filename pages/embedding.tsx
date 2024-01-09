@@ -4,6 +4,7 @@ import { usePollingEffect } from '@/hooks/usePollingEffect';
 import COS from 'cos-js-sdk-v5';
 import type { CredentialData } from 'qcloud-cos-sts';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 const cos = new COS({
     getAuthorization: function (_, callback) {
         fetch('/api/sts')
@@ -69,6 +70,7 @@ export default function Embedding() {
     )
     return (
         <div className='flex flex-col'>
+            
             <div className='mb-10'>
                 <h2 className='text-3xl font-bold mb-2'>文件上传</h2>
                 <div className='flex flex-row'>
@@ -80,6 +82,7 @@ export default function Embedding() {
                             }
                         }}
                     />
+                    <Button>Button</Button>
                     <button
                         onClick={async () => {
                             console.log('selectedFile', selectedFile)
