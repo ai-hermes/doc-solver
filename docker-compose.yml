@@ -1,26 +1,5 @@
 version: "3.9"
 services:
-  # web:
-  #   # build: .
-  #   image: "warjiang/doc-solver:canary"
-  #   # command: ["./scripts/bootstrap.sh"]
-  #   entrypoint: ["/bin/bash", "-c","./scripts/bootstrap.sh"]
-  #   cap_add:
-  #   - SYS_PTRACE
-  #   security_opt:
-  #   - "seccomp:unconfined"
-  #   ports:
-  #   - "3000:3000"
-  #   environment:
-  #   - TZ=Asia/Shanghai
-  #   volumes:
-  #   # - ./scripts:/app/scripts
-  #   - .env:/app/.env
-  #   depends_on:
-  #   - mysql
-  #   networks:
-  #   - doc-solver
-
   mysql:
     environment:
     - MYSQL_ROOT_PASSWORD=A74yJikLWdwp
@@ -58,41 +37,6 @@ services:
       CLUSTER_HOSTNAME: 'node1'
     networks:
       - doc-solver
-
-  # postgres:
-  #   image: postgres:14-alpine
-  #   ports:
-  #     - 5433:5432
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_USER: vectoradmin
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: vdbms
-  #   networks:
-  #     - doc-solver
-      
-  # vector-admin:
-  #   # container_name: vector-admin
-  #   image: vector-admin:latest
-  #   platform: linux/amd64
-  #   # build:
-  #   #   context: ../.
-  #   #   dockerfile: ./docker/Dockerfile
-  #   volumes:
-  #     - "./demos/vector-admin/.env:/app/backend/.env"
-  #     - "./demos/vector-admin/backend/storage:/app/backend/storage"
-  #     - "./demos/vector-admin/document-processor/hotdir/:/app/document-processor/hotdir"
-  #   ports:
-  #     - "3001:3001"
-  #     - "3355:3355"
-  #     - "8288:8288"
-  #   env_file:
-  #     - ./demos/vector-admin/.env
-  #   networks:
-  #     - doc-solver
-  #   depends_on:
-  #     - postgres
       
   redis:
     image: redis:6-alpine
@@ -104,13 +48,6 @@ services:
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
-
-
-
-# volumes:
-#   weaviate_data:
-#   postgres_data:
-#   redis-data:
 
 networks:
   doc-solver:
