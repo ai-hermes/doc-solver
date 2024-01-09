@@ -25,6 +25,7 @@
         "ignoreRestSiblings": true
       }
     ],
-    "@typescript-eslint/ban-ts-comment": "warn"
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "react/prop-types": "off"
   }
 }

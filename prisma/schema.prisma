@@ -16,12 +16,13 @@ model chunks {
   deleted_at DateTime? @db.Timestamp(0)
 }
 
-model content_items {
+model chunk_lines {
   id          String    @id @db.VarChar(36)
   content     String    @db.Text
   chunk_id    String    @db.VarChar(36)
   rect_info   Json
   origin_info Json
+  attribute   Json
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime  @default(now()) @db.Timestamp(0)
   deleted_at  DateTime? @db.Timestamp(0)
