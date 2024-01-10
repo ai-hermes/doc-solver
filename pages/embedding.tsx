@@ -1,6 +1,6 @@
 import React from 'react';
 import { calculateMD5Async, readFileAsync } from '@/demos/utils';
-import { usePollingEffect } from '@/hooks/usePollingEffect';
+import { usePollingEffect } from '@/hooks/use-polling-effect';
 import COS from 'cos-js-sdk-v5';
 import type { CredentialData } from 'qcloud-cos-sts';
 import { useState } from 'react';
