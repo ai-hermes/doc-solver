@@ -27,7 +27,12 @@ import type { SSEvent } from 'sse.js';
 import { extractSSEData } from '@/utils/sse';
 import { Typewriter } from '@/utils/typewriter';
 import { useBrowserLanguage } from '@/utils/useBrowserLanguage';
-export default function Home() {
+import { InferGetServerSidePropsType } from 'next';
+export default function Home({
+  messages: _messages,
+}:
+  // eslint-disable-next-line no-use-before-define
+  InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +42,13 @@ export default function Home() {
     history: [string, string][];
     pendingSourceDocs?: Document[];
   }>({
-    messages: [
-      {
-        message: 'Hi, what would you like to learn about this document?',
-        type: 'apiMessage',
-      },
-    ],
+    // messages: [
+    //   {
+    //     message: 'Hi, what would you like to learn about this document?',
+    //     type: 'apiMessage',
+    //   },
+    // ],
+    messages: _messages,
     history: [],
   });
 
@@ -65,7 +71,7 @@ export default function Home() {
     })
     return t;
   })
-  const language =  useBrowserLanguage()
+  const language = useBrowserLanguage()
   //handle form submission
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -119,7 +125,7 @@ export default function Home() {
         history: [...state.history, [query, '']],
       }
     });
-    
+
     source.addEventListener('message', (e: SSEvent) => {
       // console.log("Message: ", e.data);
       if (e.data == "[DONE]") {
@@ -139,13 +145,14 @@ export default function Home() {
         return
       }
       const objectsArray = data.map(item => JSON.parse(item))
-      if (objectsArray && !!objectsArray[0].type ) {
+      if (objectsArray && !!objectsArray[0].type) {
         // ref: only two type data, one is msg, another is hs
         // msg: pages/api/chat.ts:L80, which means the response is a text message, generate by llm
         // hs:  pages/api/chat.ts:L118, represents highligh area in the pdf, when click the source, it'll highlight the area of pdf and scroll to the highlight area
-        if(objectsArray[0].type === 'msg') {
+        if (objectsArray[0].type === 'msg') {
           typeWriter.add(objectsArray[0].msg)
-        } else if(objectsArray[0].type === 'hs') {
+        } else if (objectsArray[0].type === 'hs') {
+          console.log('objectsArray', objectsArray)
           setMessageState((state) => {
             let { messages = [] } = state
             if (messages.length !== 0) {
@@ -420,3 +427,13 @@ export default function Home() {
     </>
   );
 }
+
+import { getHistoryData } from './api/history'
+export const getServerSideProps = (async () => {
+  const history = await getHistoryData()
+  return {
+    props: {
+      messages: history,
+    }
+  }
+})
