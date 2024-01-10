@@ -94,7 +94,8 @@ async function main() {
     ]);
 
     // Retrieve documents based on a query, then format them.
-    const retrievalChain = retriever.pipe(combineDocumentsFn);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const retrievalChain = retriever.pipe(combineDocumentsFn as any);
 
     // Generate an answer to the standalone question based on the chat history
     // and retrieved documents. Additionally, we return the source documents directly.
@@ -131,12 +132,12 @@ async function main() {
         question: '什么是raft协议, 和paxos协议有什么区别?',
         chat_history: '',
     })
-    for await (const chunk of qaRespStream ){
+    for await (const chunk of qaRespStream) {
         // console.log(chunk);
         process.stdout.write(chunk);
     }
     console.log()
-    
+
 
     const sourceDocuments = await documentPromise;
     sourceDocuments.forEach(sourceDocument => {

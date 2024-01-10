@@ -37,13 +37,14 @@ async function main() {
 
 
         chuck.lines.forEach(l => {
-            const p = prisma.content_items.create({
+            const p = prisma.chunk_lines.create({
                 data: {
                     id: uuidv4(),
                     content: l.str,
                     chunk_id: puuid,
                     rect_info: l.rect,
                     origin_info: l,
+                    attribute: {},
                 }
             })
 

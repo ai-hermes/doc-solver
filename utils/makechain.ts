@@ -61,7 +61,8 @@ export const makeChain = (retriever: VectorStoreRetriever) => {
     ]);
 
     // Retrieve documents based on a query, then format them.
-    const retrievalChain = retriever.pipe(combineDocumentsFn);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const retrievalChain = retriever.pipe(combineDocumentsFn as any);
 
     // Generate an answer to the standalone question based on the chat history
     // and retrieved documents. Additionally, we return the source documents directly.
