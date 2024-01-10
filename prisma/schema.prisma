@@ -27,3 +27,11 @@ model chunk_lines {
   updated_at  DateTime  @default(now()) @db.Timestamp(0)
   deleted_at  DateTime? @db.Timestamp(0)
 }
+
+model highlights {
+  id         String    @id @db.VarChar(36)
+  hs_data    String    @db.LongText
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+}

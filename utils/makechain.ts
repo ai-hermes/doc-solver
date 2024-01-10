@@ -6,7 +6,7 @@ import { StringOutputParser } from 'langchain/schema/output_parser';
 import type { Document } from 'langchain/document';
 import type { VectorStoreRetriever } from 'langchain/vectorstores/base';
 export const CONDENSE_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
-{language}
+
 <chat_history>
   {chat_history}
 </chat_history>
@@ -31,65 +31,65 @@ Question: {question}
 Helpful answer in markdown:`;
 
 
-const langMapping:Record<string,string> = {
-  'en': "Please use english answer user question.",
-  'zh-CN': "请用中文回答用户的问题.",
+const langMapping: Record<string, string> = {
+    'en': "Please use english answer user question.",
+    'zh-CN': "请用中文回答用户的问题.",
 }
-export const genlangPrompt = (language:string) => {
-  const langPrompt = langMapping[language] || langMapping['en']
-  return langPrompt
+export const genlangPrompt = (language: string) => {
+    const langPrompt = langMapping[language] || langMapping['en']
+    return langPrompt
 }
 
 const combineDocumentsFn = (docs: Document[], separator = '\n\n') => {
-  const serializedDocs = docs.map((doc) => doc.pageContent);
-  return serializedDocs.join(separator);
+    const serializedDocs = docs.map((doc) => doc.pageContent);
+    return serializedDocs.join(separator);
 };
 
 export const makeChain = (retriever: VectorStoreRetriever) => {
-  const condenseQuestionPrompt =
-    ChatPromptTemplate.fromTemplate(CONDENSE_TEMPLATE);
-  const answerPrompt = ChatPromptTemplate.fromTemplate(QA_TEMPLATE);
+    const condenseQuestionPrompt =
+        ChatPromptTemplate.fromTemplate(CONDENSE_TEMPLATE);
+    const answerPrompt = ChatPromptTemplate.fromTemplate(QA_TEMPLATE);
 
-  const model = new ChatOpenAI(chatBaseCfg, extraCfg);
+    const model = new ChatOpenAI(chatBaseCfg, extraCfg);
 
-  // Rephrase the initial question into a dereferenced standalone question based on
-  // the chat history to allow effective vectorstore querying.
-  const standaloneQuestionChain = RunnableSequence.from([
-    condenseQuestionPrompt,
-    model,
-    new StringOutputParser(),
-  ]);
+    // Rephrase the initial question into a dereferenced standalone question based on
+    // the chat history to allow effective vectorstore querying.
+    const standaloneQuestionChain = RunnableSequence.from([
+        condenseQuestionPrompt,
+        model,
+        new StringOutputParser(),
+    ]);
 
-  // Retrieve documents based on a query, then format them.
-  const retrievalChain = retriever.pipe(combineDocumentsFn);
+    // Retrieve documents based on a query, then format them.
+    const retrievalChain = retriever.pipe(combineDocumentsFn);
 
-  // Generate an answer to the standalone question based on the chat history
-  // and retrieved documents. Additionally, we return the source documents directly.
-  const answerChain = RunnableSequence.from([
-    {
-      context: RunnableSequence.from([
-        (input) => input.question,
-        retrievalChain,
-      ]),
-      chat_history: (input) => input.chat_history,
-      question: (input) => input.question,
-      language: (input) => input.language,
-    },
-    answerPrompt,
-    model,
-    new StringOutputParser(),
-  ]);
+    // Generate an answer to the standalone question based on the chat history
+    // and retrieved documents. Additionally, we return the source documents directly.
+    const answerChain = RunnableSequence.from([
+        {
+            context: RunnableSequence.from([
+                (input) => input.question,
+                retrievalChain,
+            ]),
+            chat_history: (input) => input.chat_history,
+            question: (input) => input.question,
+            language: (input) => input.language,
+        },
+        answerPrompt,
+        model,
+        new StringOutputParser(),
+    ]);
 
-  // First generate a standalone question, then answer it based on
-  // chat history and retrieved context documents.
-  const conversationalRetrievalQAChain = RunnableSequence.from([
-    {
-      question: standaloneQuestionChain,
-      chat_history: (input) => input.chat_history,
-      language: (input) => input.language,
-    },
-    answerChain,
-  ]);
+    // First generate a standalone question, then answer it based on
+    // chat history and retrieved context documents.
+    const conversationalRetrievalQAChain = RunnableSequence.from([
+        {
+            question: standaloneQuestionChain,
+            chat_history: (input) => input.chat_history,
+            language: (input) => input.language,
+        },
+        answerChain,
+    ]);
 
-  return conversationalRetrievalQAChain;
+    return conversationalRetrievalQAChain;
 };
