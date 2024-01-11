@@ -1,9 +1,17 @@
-import React from 'react';
 import '@/styles/global.css';
-import type { AppProps } from 'next/app';
-import { Inter } from 'next/font/google';
-import "pdfjs-dist/web/pdf_viewer.css";
+
+import React from 'react';
+import type { ReactElement, ReactNode } from 'react'
+import type { NextPage } from 'next'
+import type { AppProps } from 'next/app'
+
+import { ThemeProvider } from "@/components/providers";
+import { SessionProvider } from "next-auth/react"
+import { TailwindIndicator } from "@/components/tailwind-indicator";
+
+
 //  web/pdf_viewer.css"
+import "pdfjs-dist/web/pdf_viewer.css";
 import '@/components/ui/react-pdf-highlighter/style/AreaHighlight.css';
 import '@/components/ui/react-pdf-highlighter/style/Highlight.css';
 import '@/components/ui/react-pdf-highlighter/style/MouseSelection.css';
@@ -11,19 +19,31 @@ import '@/components/ui/react-pdf-highlighter/style/pdf_viewer.css';
 import '@/components/ui/react-pdf-highlighter/style/PdfHighlighter.css';
 import '@/components/ui/react-pdf-highlighter/style/Tip.css';
 
-const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-});
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <main className={inter.variable}>
-        <Component {...pageProps} />
-      </main>
-    </>
-  );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type NextPageWithLayout<P = any, IP = P> = NextPage<P, IP> & {
+    getLayout?: (page: ReactElement) => ReactNode
 }
 
-export default MyApp;
+type AppPropsWithLayout = AppProps & {
+    Component: NextPageWithLayout
+}
+
+function App({
+    Component,
+    pageProps: { session, ...pageProps },
+}: AppPropsWithLayout) {
+    // Use the layout defined at the page level, if available
+    const getLayout = Component.getLayout ?? ((page) => page)
+    return (
+        <SessionProvider session={session}>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+                <div className="flex min-h-screen flex-col">
+                    {getLayout(<Component {...pageProps} />)}
+                </div>
+                <TailwindIndicator />
+            </ThemeProvider>
+        </SessionProvider>
+    )
+}
+export default App;
