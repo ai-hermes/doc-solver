@@ -1,4 +1,6 @@
-import NextAuth, { SessionOptions } from "next-auth"
+import NextAuth, { SessionOptions, Session } from "next-auth"
+import { JWT } from "next-auth/jwt"
+import { AdapterUser } from "next-auth/adapters"
 import GithubProvider from "next-auth/providers/github"
 import { getPrismaClient } from '@/lib/clients/prisma'
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -26,7 +28,19 @@ export const authOptions = {
         generateSessionToken: () => {
             return randomUUID?.() ?? randomBytes(32).toString("hex")
         }
-    } as Partial<SessionOptions>
+    } as Partial<SessionOptions>,
+    callbacks: {
+        session: async ({ session, token, user }: {
+            session: Session,
+            token: JWT,
+            user: AdapterUser
+        }) => {
+            if (session?.user) {
+                session.user.id = user.id;
+            }
+            return session;
+        },
+    }
 }
 
 export default NextAuth(authOptions)

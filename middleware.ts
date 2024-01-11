@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server'
-import { withContext } from './context';
-
-const allowedContextKeys = ["user"];
-export default withContext(allowedContextKeys, (setContext, req) => {
-    // setContext("user", JSON.stringify({ id: 1, name: 'John Doe' }));
-    return NextResponse.next();
-});
+import { withAuth } from 'next-auth/middleware'
+export default withAuth({})
 
 // See "Matching Paths" below to learn more
+// https://nextjs.org/docs/pages/building-your-application/routing/middleware
 export const config = {
-    matcher: '/api/:path*',
+    matcher: [
+        '/api/:path*',
+        '/dashboard/:path*'
+    ],
 }
+
+
