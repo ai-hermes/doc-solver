@@ -1,11 +1,12 @@
-import { getOpenAIEmbeddings } from '@/utils/llm';
-import { PDFLoader } from '@/utils/pdfLoader';
-import { getWeaviateClient } from '@/utils/weaviate-client';
 import { WeaviateStore } from 'langchain/vectorstores/weaviate'
-import { prisma } from '@/utils/prisma'
 import fs from 'fs';
+import { PDFLoader } from '@/lib/pdfLoader';
+import { getPrismaClient } from '@/lib/clients/prisma';
+import { getOpenAIEmbeddings } from '@/lib/clients/llm';
+import { getWeaviateClient } from '@/lib/clients/weaviate';
 
 async function main() {
+    const prisma = getPrismaClient();
     const source = 'raft.pdf';
     const indexName = 'Test10';
     const loader = new PDFLoader(
@@ -29,7 +30,7 @@ async function main() {
         //     content: chunk.str,
         //     attribute: chunk.attribute || {},
         // })
-        const p = prisma.chunks.create({
+        const p = prisma.chunk.create({
             data: {
                 id: chunk.id || '',
                 content: chunk.str,
@@ -47,7 +48,7 @@ async function main() {
             //     rect_info: l.rect,
             //     origin_info: l,
             // })
-            const p = prisma.chunk_lines.create({
+            const p = prisma.chunkLine.create({
                 data: {
                     id: l.id || '',
                     content: l.str,

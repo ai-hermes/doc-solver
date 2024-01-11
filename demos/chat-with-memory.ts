@@ -1,8 +1,8 @@
 import { ConversationSummaryMemory } from "langchain/memory";
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { chatBaseCfg, extraCfg } from '@/config/openai';
+// import { chatBaseCfg, extraCfg } from '@/config/openai';
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { getOpenAIChat } from "@/lib/clients/llm";
 
 
 // const client = new Redis({
@@ -15,7 +15,8 @@ import { PromptTemplate } from "@langchain/core/prompts";
 
 
 async function main() {
-    const model = new ChatOpenAI(chatBaseCfg, extraCfg);
+    const model = getOpenAIChat();
+    // const model = new ChatOpenAI(chatBaseCfg, extraCfg);
     const memory = new ConversationSummaryMemory({
         memoryKey: "chat_history",
         llm: model,

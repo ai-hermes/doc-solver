@@ -1,8 +1,7 @@
 import { BufferMemory, ConversationSummaryMemory, CombinedMemory } from "langchain/memory";
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { chatBaseCfg, extraCfg } from '@/config/openai';
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
+import { getOpenAIChat } from "@/lib/clients/llm";
 
 
 // const client = new Redis({
@@ -15,7 +14,8 @@ import { PromptTemplate } from "langchain/prompts";
 
 
 async function main() {
-    const model = new ChatOpenAI(chatBaseCfg, extraCfg);
+    // const model = new ChatOpenAI(chatBaseCfg, extraCfg);
+    const model = getOpenAIChat();
     const bufferMemory = new BufferMemory({
         memoryKey: "chat_history_lines",
         inputKey: "input",
@@ -51,8 +51,8 @@ AI:`;
 
     const res3 = await chain.call({
         input: "What's my name and what joke did you just tell?",
-      });
-      console.log({ res3 });
+    });
+    console.log({ res3 });
 
     /*
     // const memory = new BufferMemory({
