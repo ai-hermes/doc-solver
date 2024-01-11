@@ -79,7 +79,7 @@ export default async function handler(
         const sourceDocuments = qaClient.getRelavantDocs()
 
         const uuids = sourceDocuments.map(d => d.metadata['chunkId']).filter(Boolean);
-        const hs = await prisma.chunk_lines.findMany({
+        const hs = await prisma.chunkLine.findMany({
             select: {
                 rect_info: true,
                 content: true,
@@ -109,7 +109,7 @@ export default async function handler(
 
 
         const hsUuid = uuidv4();
-        await prisma.highlights.create({
+        await prisma.highlight.create({
             data: {
                 id: hsUuid,
                 hs_data: JSON.stringify(sourceDocumentsWithHs),

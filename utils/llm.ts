@@ -4,6 +4,7 @@ import { BufferMemory } from "langchain/memory";
 import { RedisChatMessageHistory } from "@langchain/community/stores/message/ioredis";
 import { ChatOpenAIType, OpenAIEmbeddingsType } from '@/types/common';
 import { getRedisUrl } from '@/lib/clients/redis';
+import { Nullable } from '@/typings';
 
 const extraCfg = {
     apiKey: process.env.OPENAI_API_KEY,

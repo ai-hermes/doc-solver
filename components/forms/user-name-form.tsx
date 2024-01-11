@@ -35,7 +35,9 @@ export function UserNameForm({ user }: UserNameFormProps) {
         handleSubmit,
         register,
         formState: { errors },
-    } = useForm<FormData>({
+    } = useForm<{
+        name: string;
+    }>({
         resolver: zodResolver(userNameSchema),
         defaultValues: {
             name: user?.name || "",

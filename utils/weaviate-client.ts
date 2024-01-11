@@ -1,3 +1,4 @@
+import { Nullable } from '@/typings';
 import weaviate, { WeaviateClient } from 'weaviate-ts-client';
 let weaviateClient: Nullable<WeaviateClient> = null;
 

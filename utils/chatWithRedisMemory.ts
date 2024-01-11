@@ -15,6 +15,7 @@ import { RedisChatMessageHistory } from "@langchain/community/stores/message/ior
 import { v4 as uuidv4 } from 'uuid';
 import { QA_TEMPLATE, CONDENSE_TEMPLATE } from "./makechain";
 import { serializeChatHistory } from "./llm";
+import { Nullable } from "@/typings";
 
 
 interface PromptContextData {

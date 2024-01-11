@@ -19,7 +19,7 @@ export default function DashboardLayout({
     const user = session?.user
     console.log('user', session)
     if (!session?.user) {
-        return "notFound()"
+        return <></>
     }
 
     return (

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Nullable } from '@/typings';
 const cos = new COS({
     getAuthorization: function (_, callback) {
         fetch('/api/sts')
