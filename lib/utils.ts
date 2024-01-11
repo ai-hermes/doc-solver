@@ -36,3 +36,11 @@ export function nFormatter(num: number, digits?: number) {
         ? (num / item.value).toFixed(digits || 1).replace(rx, "$1") + item.symbol
         : "0";
 }
+
+export function sleepNSeconds(n: number) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(null)
+        }, n * 1000)
+    })
+}
