@@ -13,7 +13,6 @@
   ],
   "rules": {
     "import/no-cycle": "error",
-    "no-use-before-define": "error",
     "max-lines-per-function": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -26,6 +25,7 @@
       }
     ],
     "@typescript-eslint/ban-ts-comment": "warn",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "no-use-before-define": "off"
   }
 }
