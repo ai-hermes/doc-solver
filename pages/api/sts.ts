@@ -5,7 +5,7 @@ import {
 } from '@/config/qcloud';
 
 export default async function handler(
-    req: NextApiRequest,
+    _: NextApiRequest,
     res: NextApiResponse<STS.CredentialData>,
 ) {
 

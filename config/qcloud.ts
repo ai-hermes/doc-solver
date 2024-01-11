@@ -1,10 +1,12 @@
-const SECRET_ID = process.env.QCLOUD_SECRET_ID;
-const SECRET_KEY = process.env.QCLOUD_SECRET_KEY;
-const BUCKET = process.env.QCLOUD_BUCKET;
-const REGION = process.env.QCLOUD_REGION;
+import { env } from 'env.mjs';
+
+const SECRET_ID = env.QCLOUD_SECRET_ID;
+const SECRET_KEY = env.QCLOUD_SECRET_KEY;
+const BUCKET = env.QCLOUD_BUCKET;
+const REGION = env.QCLOUD_REGION;
 const ALLOW_PREFIX = "/pdf"
 const ENDPOINT = 'sts.tencentcloudapi.com'
-const DURATION_SECONDS = parseInt(process.env.QCLOUD_DURATION_SECONDS, 10);
+const DURATION_SECONDS = env.QCLOUD_DURATION_SECONDS;
 const SHORT_BUCKETNAME = BUCKET.substring(0, BUCKET.lastIndexOf('-'));
 const APP_ID = BUCKET.substring(1 + BUCKET.lastIndexOf('-'));
 
@@ -35,7 +37,6 @@ const POLICY = {
         ],
     }],
 };
-process.env.DATABASE_URL
 export {
     SECRET_ID,
     SECRET_KEY,
