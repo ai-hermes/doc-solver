@@ -1,6 +1,9 @@
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
+import { BufferMemory } from "langchain/memory";
+import { RedisChatMessageHistory } from "@langchain/community/stores/message/ioredis";
 import { ChatOpenAIType, OpenAIEmbeddingsType } from '@/types/common';
+import { getRedisUrl } from '@/lib/clients/redis';
 
 const extraCfg = {
     apiKey: process.env.OPENAI_API_KEY,
@@ -43,3 +46,16 @@ export const serializeChatHistory = (chatHistory: string | Array<string>) => {
     }
     return chatHistory;
 };
+
+
+export function getBufferMemory(chatId: string, memoryKey = 'chat_history') {
+    const memory = new BufferMemory({
+        memoryKey,
+        chatHistory: new RedisChatMessageHistory({
+            sessionId: chatId, // Or some other unique identifier for the conversation
+            sessionTTL: 43200, // 1 month 30 * 24 * 60, omit this parameter to make sessions never expire
+            url: getRedisUrl(), // Default value, override with your own instance's URL
+        })
+    });
+    return memory;
+}

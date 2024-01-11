@@ -1,12 +1,13 @@
-import { TestQueue } from './queues/test';
+import { IngestQueue } from './queues/ingest';
 
 async function main() {
-
-    const queue = TestQueue.getQueue()
+    const queue = IngestQueue.getQueue()
     await queue
         .createJob({
-            pdfUrl: 'string',
-            pdfMd5Key: 'string'
+            source: 'raft.pdf',
+            indexName: 'Test11',
+            pdfUrl: 'doc-solver-dev-1251009550.cos.ap-shanghai.myqcloud.com/pdf/d6db6fd34c5ea56fa1dc8f55df17830e',
+            pdfMd5Key: 'pdf/d6db6fd34c5ea56fa1dc8f55df17830e',
         })
         .save()
 }
