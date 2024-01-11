@@ -17,6 +17,19 @@ declare global {
       QCLOUD_REGION: string;
       NEXT_PUBLIC_QCLOUD_BUCKET: string;
       NEXT_PUBLIC_QCLOUD_REGION: string;
+      WEAVIATE_SCHEMA: string;
+      WEAVIATE_HOST: string;
+      NEXT_PUBLIC_SUPABASE_URL: string;
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+      REDIS_HOST: string;
+      REDIS_PORT: string;
+      REDIS_DB: string;
+      REDIS_USERNAME: string;
+      REDIS_PASSWORD: string;
+      GITHUB_ID: string;
+      GITHUB_SECRET: string;
+      NEXTAUTH_URL: string;
+      NEXTAUTH_SECRET: string;
     }
   }
 }

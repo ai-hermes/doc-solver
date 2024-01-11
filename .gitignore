@@ -42,6 +42,7 @@ next-env.d.ts
 .yarn/
 .vscode
 docs/
+!components/docs/
 # demos
 # package-lock.json
 yarn.lock
@@ -49,3 +50,4 @@ mysql-data
 demos/vector-admin
 demos/data
 tmp
+prisma/migrations
