@@ -7,16 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model chunks {
+model Chunk {
   id         String    @id @db.VarChar(36)
   content    String    @db.Text
   attribute  Json
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime  @default(now()) @db.Timestamp(0)
   deleted_at DateTime? @db.Timestamp(0)
+
+  @@map("chunks")
 }
 
-model chunk_lines {
+model ChunkLine {
   id          String    @id @db.VarChar(36)
   content     String    @db.Text
   chunk_id    String    @db.VarChar(36)
@@ -26,12 +28,67 @@ model chunk_lines {
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime  @default(now()) @db.Timestamp(0)
   deleted_at  DateTime? @db.Timestamp(0)
+
+  @@map("chunk_lines")
 }
 
-model highlights {
+model Highlight {
   id         String    @id @db.VarChar(36)
   hs_data    String    @db.LongText
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime  @default(now()) @db.Timestamp(0)
   deleted_at DateTime? @db.Timestamp(0)
+
+  @@map("highlights")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
