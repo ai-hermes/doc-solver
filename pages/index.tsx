@@ -21,7 +21,7 @@ import { hightlightAtom } from '@/components/ui/pdf/store'
 // import { v4 as uuidv4 } from 'uuid';
 import { IHighlight } from '@/components/ui/react-pdf-highlighter/types'
 import MD5 from 'crypto-js/md5';
-import { usePathname } from 'next/navigation'
+// import { usePathname } from 'next/navigation'
 import { createBrowserClient } from "@supabase/ssr";
 import { SSE } from 'sse.js';
 import type { SSEvent } from 'sse.js';
@@ -31,12 +31,12 @@ import { useBrowserLanguage } from '@/utils/useBrowserLanguage';
 import { useUser } from "@/lib/store/user";
 
 export default function Home() {
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   const user = useUser((state) => state.user);
   const setUser = useUser((state) => state.setUser);
 
-  console.log(user, "current user");
+  console.log("get current user", user);
 
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -278,9 +278,9 @@ export default function Home() {
   const handleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "github",
-      options: {
-        redirectTo: location.origin + "/api/auth?next=" + pathname,
-      }
+      // options: {
+      //   redirectTo: location.origin + "/api/auth?next=" + pathname,
+      // }
     });
   }
 

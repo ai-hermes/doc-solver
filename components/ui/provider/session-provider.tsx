@@ -14,6 +14,7 @@ const SessionProvider = () => {
 
     const userSession = useCallback(async () => {
         const { data } = await supabase.auth.getSession();
+
         setUser(data.session?.user);
     }, [setUser, supabase]);
 

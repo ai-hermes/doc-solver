@@ -3,12 +3,16 @@ import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { handlerWrapper } from "../../utils/handler-wrapper";
 
-export default handlerWrapper(async (request, res) => {
+export default handlerWrapper(async (request) => {
     const origin = request.headers.host
     const { code, next } = request.query
 
     if (code) {
 
+        /**
+         * A Error but unsolved
+         * Method expects to have requestAsyncStorage, none available
+         */
         const cookieStore = cookies();
 
         const supabase = createServerClient(
@@ -29,7 +33,6 @@ export default handlerWrapper(async (request, res) => {
             }
         );
 
-
         const { error } = await supabase.auth.exchangeCodeForSession(code as string);
 
         if (!error) {
@@ -39,5 +42,4 @@ export default handlerWrapper(async (request, res) => {
 
     // return the user to an error page with instructions
     return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-}
-)
+})
