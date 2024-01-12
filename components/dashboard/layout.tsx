@@ -17,8 +17,7 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
     const { data: session } = useSession()
     const user = session?.user
-    console.log('user', session)
-    if (!session?.user) {
+    if (!user) {
         return <></>
     }
 
