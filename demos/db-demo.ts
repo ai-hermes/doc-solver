@@ -22,7 +22,7 @@ async function main() {
     const promises: Array<Promise<any>> = []
     chuncks.forEach((chuck, index) => {
         const puuid = uuidv4();
-        const p = prisma.chunks.create({
+        const p = prisma.chunk.create({
             data: {
                 id: puuid,
                 content: chuck.str,
@@ -37,13 +37,14 @@ async function main() {
 
 
         chuck.lines.forEach(l => {
-            const p = prisma.content_items.create({
+            const p = prisma.chunkLine.create({
                 data: {
                     id: uuidv4(),
                     content: l.str,
                     chunk_id: puuid,
                     rect_info: l.rect,
                     origin_info: l,
+                    attribute: {},
                 }
             })
 
