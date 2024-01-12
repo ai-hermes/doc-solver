@@ -11,6 +11,7 @@ import { cn } from "@/utils/cn";
 // import { useSigninModal } from "@/hooks/use-signin-modal";
 
 interface NavBarProps {
+    className?: string;
     user: Pick<User, "name" | "image" | "email"> | undefined
     items?: MainNavItem[]
     children?: React.ReactNode
@@ -18,7 +19,7 @@ interface NavBarProps {
     scroll?: boolean
 }
 
-export function NavBar({ user, items, children, rightElements, scroll = false }: NavBarProps) {
+export function NavBar({ className, user, items, children, rightElements, scroll = false }: NavBarProps) {
     const scrolled = useScroll(50);
     // const signInModal = useSigninModal();
     return (
@@ -28,7 +29,7 @@ export function NavBar({ user, items, children, rightElements, scroll = false }:
                 : "bg-background/0"
                 : "border-b"}`}
         >
-            <div className="container flex h-16 items-center justify-between py-4">
+            <div className={cn(`${className ? className : 'container'} flex h-16 items-center justify-between py-4`)}>
                 <MainNav items={items}>{children}</MainNav>
 
                 <div className="flex items-center space-x-3">
