@@ -1,6 +1,81 @@
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
 
+const isGitHubCI = process.env.GITHUB_ACTIONS === 'true';
+const runtimeEnv =
+    isGitHubCI ?
+        {
+            // openai
+            OPENAI_BASE: '',
+            OPENAI_API_KEY: '',
+            CHAT_MODEL_NAME: '',
+            EMBEDDING_MODEL_NAME: '',
+            EMBEDDING_BATCHSIZE: 0,
+            // pinecone[removed in the future]
+            PINECONE_API_KEY: '',
+            PINECONE_ENVIRONMENT: '',
+            PINECONE_INDEX_NAME: '',
+            //  weaviate
+            WEAVIATE_HOST: '',
+            WEAVIATE_SCHEMA: '',
+            // mysql
+            DATABASE_URL: '',
+
+            // redis
+            REDIS_HOST: '',
+            REDIS_DB: 0,
+            REDIS_PORT: 0,
+            REDIS_USERNAME: '',
+            REDIS_PASSWORD: '',
+            // qcloud
+            QCLOUD_SECRET_ID: '',
+            QCLOUD_SECRET_KEY: '',
+            QCLOUD_DURATION_SECONDS: 0,
+            QCLOUD_BUCKET: '',
+            QCLOUD_REGION: '',
+            NEXT_PUBLIC_QCLOUD_BUCKET: '',
+            NEXT_PUBLIC_QCLOUD_REGION: '',
+
+            // auth
+            GITHUB_ID: '',
+            GITHUB_SECRET: ''
+        } :
+        {
+            // openai
+            OPENAI_BASE: process.env.OPENAI_BASE,
+            OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+            CHAT_MODEL_NAME: process.env.CHAT_MODEL_NAME,
+            EMBEDDING_MODEL_NAME: process.env.EMBEDDING_MODEL_NAME,
+            EMBEDDING_BATCHSIZE: process.env.EMBEDDING_BATCHSIZE,
+            // pinecone[removed in the future]
+            PINECONE_API_KEY: process.env.PINECONE_API_KEY,
+            PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT,
+            PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
+            //  weaviate
+            WEAVIATE_HOST: process.env.WEAVIATE_HOST,
+            WEAVIATE_SCHEMA: process.env.WEAVIATE_SCHEMA,
+            // mysql
+            DATABASE_URL: process.env.DATABASE_URL,
+
+            // redis
+            REDIS_HOST: process.env.REDIS_HOST,
+            REDIS_DB: process.env.REDIS_DB,
+            REDIS_PORT: process.env.REDIS_PORT,
+            REDIS_USERNAME: process.env.REDIS_USERNAME,
+            REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+            // qcloud
+            QCLOUD_SECRET_ID: process.env.QCLOUD_SECRET_ID,
+            QCLOUD_SECRET_KEY: process.env.QCLOUD_SECRET_KEY,
+            QCLOUD_DURATION_SECONDS: process.env.QCLOUD_DURATION_SECONDS,
+            QCLOUD_BUCKET: process.env.QCLOUD_BUCKET,
+            QCLOUD_REGION: process.env.QCLOUD_REGION,
+            NEXT_PUBLIC_QCLOUD_BUCKET: process.env.NEXT_PUBLIC_QCLOUD_BUCKET,
+            NEXT_PUBLIC_QCLOUD_REGION: process.env.NEXT_PUBLIC_QCLOUD_REGION,
+
+            // auth
+            GITHUB_ID: process.env.GITHUB_ID,
+            GITHUB_SECRET: process.env.GITHUB_SECRET,
+        }
 export const env = createEnv({
     server: {
         // This is optional because it's only used in development.
@@ -79,40 +154,6 @@ export const env = createEnv({
         // NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
         // NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
         // NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
-
-        // openai
-        OPENAI_BASE: process.env.OPENAI_BASE,
-        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-        CHAT_MODEL_NAME: process.env.CHAT_MODEL_NAME,
-        EMBEDDING_MODEL_NAME: process.env.EMBEDDING_MODEL_NAME,
-        EMBEDDING_BATCHSIZE: process.env.EMBEDDING_BATCHSIZE,
-        // pinecone[removed in the future]
-        PINECONE_API_KEY: process.env.PINECONE_API_KEY,
-        PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT,
-        PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
-        //  weaviate
-        WEAVIATE_HOST: process.env.WEAVIATE_HOST,
-        WEAVIATE_SCHEMA: process.env.WEAVIATE_SCHEMA,
-        // mysql
-        DATABASE_URL: process.env.DATABASE_URL,
-
-        // redis
-        REDIS_HOST: process.env.REDIS_HOST,
-        REDIS_DB: process.env.REDIS_DB,
-        REDIS_PORT: process.env.REDIS_PORT,
-        REDIS_USERNAME: process.env.REDIS_USERNAME,
-        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-        // qcloud
-        QCLOUD_SECRET_ID: process.env.QCLOUD_SECRET_ID,
-        QCLOUD_SECRET_KEY: process.env.QCLOUD_SECRET_KEY,
-        QCLOUD_DURATION_SECONDS: process.env.QCLOUD_DURATION_SECONDS,
-        QCLOUD_BUCKET: process.env.QCLOUD_BUCKET,
-        QCLOUD_REGION: process.env.QCLOUD_REGION,
-        NEXT_PUBLIC_QCLOUD_BUCKET: process.env.NEXT_PUBLIC_QCLOUD_BUCKET,
-        NEXT_PUBLIC_QCLOUD_REGION: process.env.NEXT_PUBLIC_QCLOUD_REGION,
-
-        // auth
-        GITHUB_ID: process.env.GITHUB_ID,
-        GITHUB_SECRET: process.env.GITHUB_SECRET,
+        ...runtimeEnv,
     },
 })
