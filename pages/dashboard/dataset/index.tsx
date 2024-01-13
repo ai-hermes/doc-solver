@@ -10,6 +10,8 @@ import {
 import { calculateMD5Async, readFileAsync } from "@/lib/fsUtils";
 import { getClientCOSClient } from '@/lib/clients/jscos';
 import { env } from 'env.mjs';
+import { columns } from "@/components/dashboard/dataset/columns";
+import { DataTable } from "@/components/dashboard/dataset/data-table";
 
 const cos = getClientCOSClient();
 export const metadata = {
@@ -25,7 +27,7 @@ function DatasetPage() {
                 heading="Dataset"
                 text="Upload your pdf, split it into chunks and convert chunks in another dimention for searching."
             />
-            <div className="grid gap-8">
+            <div className="p-[20px]">
                 <Card className='mb-10'>
                     <CardHeader>
                         <CardTitle>Upload pdf file</CardTitle>
@@ -96,6 +98,7 @@ function DatasetPage() {
                         </Button>
                     </CardContent>
                 </Card>
+                <DataTable data={[]} columns={columns} />
             </div>
         </DashboardShell>
     )
