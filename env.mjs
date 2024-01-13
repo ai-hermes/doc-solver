@@ -6,7 +6,7 @@ const runtimeEnv =
     isGitHubCI ?
         {
             // openai
-            OPENAI_BASE: '*',
+            OPENAI_BASE: 'https://www.example.com',
             OPENAI_API_KEY: '*',
             CHAT_MODEL_NAME: '*',
             EMBEDDING_MODEL_NAME: '*',
