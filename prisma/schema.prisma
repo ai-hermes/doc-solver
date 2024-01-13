@@ -32,6 +32,20 @@ model ChunkLine {
   @@map("chunk_lines")
 }
 
+model Task {
+  id          String    @id @db.VarChar(36)
+  user_id     String
+  bq_id       String
+  task_type   String
+  task_name   String
+  task_status String
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at  DateTime? @db.Timestamp(0)
+
+  @@map("tasks")
+}
+
 model Highlight {
   id         String    @id @db.VarChar(36)
   hs_data    String    @db.LongText
