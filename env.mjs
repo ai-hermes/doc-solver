@@ -6,39 +6,39 @@ const runtimeEnv =
     isGitHubCI ?
         {
             // openai
-            OPENAI_BASE: '',
-            OPENAI_API_KEY: '',
-            CHAT_MODEL_NAME: '',
-            EMBEDDING_MODEL_NAME: '',
+            OPENAI_BASE: '*',
+            OPENAI_API_KEY: '*',
+            CHAT_MODEL_NAME: '*',
+            EMBEDDING_MODEL_NAME: '*',
             EMBEDDING_BATCHSIZE: 0,
             // pinecone[removed in the future]
-            PINECONE_API_KEY: '',
-            PINECONE_ENVIRONMENT: '',
-            PINECONE_INDEX_NAME: '',
+            PINECONE_API_KEY: '*',
+            PINECONE_ENVIRONMENT: '*',
+            PINECONE_INDEX_NAME: '*',
             //  weaviate
-            WEAVIATE_HOST: '',
-            WEAVIATE_SCHEMA: '',
+            WEAVIATE_HOST: '*',
+            WEAVIATE_SCHEMA: '*',
             // mysql
-            DATABASE_URL: '',
+            DATABASE_URL: '*',
 
             // redis
-            REDIS_HOST: '',
+            REDIS_HOST: '*',
             REDIS_DB: 0,
             REDIS_PORT: 0,
-            REDIS_USERNAME: '',
-            REDIS_PASSWORD: '',
+            REDIS_USERNAME: '*',
+            REDIS_PASSWORD: '*',
             // qcloud
-            QCLOUD_SECRET_ID: '',
-            QCLOUD_SECRET_KEY: '',
+            QCLOUD_SECRET_ID: '*',
+            QCLOUD_SECRET_KEY: '*',
             QCLOUD_DURATION_SECONDS: 0,
-            QCLOUD_BUCKET: '',
-            QCLOUD_REGION: '',
-            NEXT_PUBLIC_QCLOUD_BUCKET: '',
-            NEXT_PUBLIC_QCLOUD_REGION: '',
+            QCLOUD_BUCKET: '*',
+            QCLOUD_REGION: '*',
+            NEXT_PUBLIC_QCLOUD_BUCKET: '*',
+            NEXT_PUBLIC_QCLOUD_REGION: '*',
 
             // auth
-            GITHUB_ID: '',
-            GITHUB_SECRET: ''
+            GITHUB_ID: '*',
+            GITHUB_SECRET: '*'
         } :
         {
             // openai
