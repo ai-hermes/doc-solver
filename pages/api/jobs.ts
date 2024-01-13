@@ -19,6 +19,7 @@ async function GET(_: NextApiRequest, res: NextApiResponse, user: Session['user'
             task_type: true,
             task_name: true,
             task_status: true,
+            bq_id: true,
         }
     })
     res.status(200).json({

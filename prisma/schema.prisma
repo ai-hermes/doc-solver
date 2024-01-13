@@ -35,7 +35,7 @@ model ChunkLine {
 model Task {
   id          String    @id @db.VarChar(36)
   user_id     String
-  bq_id       String
+  bq_id       String    @unique
   task_type   String
   task_name   String
   task_status String
