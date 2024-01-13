@@ -24,6 +24,9 @@ import {
     User,
     X,
     LucideIcon,
+    BookOpen,
+    Database,
+    EyeOff,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -96,4 +99,7 @@ export const Icons = {
     ),
     user: User,
     warning: AlertTriangle,
+    book: BookOpen,
+    database: Database,
+    eyeOff: EyeOff,
 }
