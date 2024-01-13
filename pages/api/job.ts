@@ -68,6 +68,42 @@ async function POST(
     }
 }
 
+async function DELETE(
+    req: NextApiRequest,
+    res: NextApiResponse,
+    user: Session['user']) {
+    const jobId = req.body.id as string;
+    if (!jobId) {
+        res.status(200).json({
+            code: 500,
+            message: `jobId is required`
+        })
+    }
+
+    const prisma = getPrismaClient()
+    const cnt = await prisma.task.count({
+        where: {
+            id: jobId,
+            user_id: user.id
+        }
+    })
+    if (cnt === 0) {
+        res.status(200).json({
+            code: 200,
+            message: `job not match login user, ignore`
+        })
+        return
+    }
+    await prisma.task.delete({
+        where: {
+            id: jobId
+        }
+    })
+    res.status(200).json({
+        code: 200,
+        message: `job deleted`
+    })
+}
 
 async function GET(
     req: NextApiRequest,
@@ -98,7 +134,7 @@ async function GET(
 
 }
 
-export default async function handler(req: JobNextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions)
     if (!session || !session.user) {
         res.status(401)
@@ -109,8 +145,10 @@ export default async function handler(req: JobNextApiRequest, res: NextApiRespon
             return GET(req, res);
         case 'POST':
             return POST(req, res, session.user);
+        case 'DELETE':
+            return DELETE(req, res, session.user);
         default:
-            res.setHeader('Allow', ['GET', 'POST']);
+            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
