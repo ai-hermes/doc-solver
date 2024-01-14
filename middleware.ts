@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { withAuth } from 'next-auth/middleware'
 
 export async function middleware(request: NextRequest) {
 
@@ -48,3 +49,15 @@ export async function middleware(request: NextRequest) {
     await supabase.auth.getSession()
     return response
 }
+export default withAuth({})
+
+// See "Matching Paths" below to learn more
+// https://nextjs.org/docs/pages/building-your-application/routing/middleware
+export const config = {
+    matcher: [
+        '/api/:path*',
+        '/dashboard/:path*'
+    ],
+}
+
+

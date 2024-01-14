@@ -1,3 +1,5 @@
+import { Nullable } from "@/typings";
+
 export class Typewriter {
     private queue: string[] = []
     private consuming = false
