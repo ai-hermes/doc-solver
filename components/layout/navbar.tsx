@@ -42,7 +42,7 @@ export function NavBar({ user, items, children, rightElements, scroll = false }:
                                 buttonVariants({ variant: "outline", size: "sm" })
                             )}
                         >
-                            Login Page
+                            Login
                         </Link>
                     ) : null}
 
@@ -53,7 +53,7 @@ export function NavBar({ user, items, children, rightElements, scroll = false }:
                             className="px-3"
                             variant="default" size="sm"
                             onClick={() => { }}>
-                            Sign In
+                            Sign Out
                         </Button>
                     )}
                 </div>
