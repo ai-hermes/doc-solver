@@ -51,3 +51,4 @@ demos/vector-admin
 demos/data
 tmp
 prisma/migrations
+demos
