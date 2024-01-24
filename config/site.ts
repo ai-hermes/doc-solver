@@ -1,14 +1,14 @@
 const site_url = process.env.NEXT_PUBLIC_APP_URL;
 
 export const siteConfig = {
-    name: "SaaS Starter",
+    name: "DocSolver",
     description:
-        "Get your project off to an explosive start with SaaS Starter! Harness the power of Next.js 14, Prisma, Planetscale, Auth.js, Resend, React Email, Shadcn/ui and Stripe to build your next big thing.",
+        "Use the new GPT-4 api to build a chatGPT chatbot for multiple Large PDF files.",
     url: site_url,
     ogImage: `${site_url}/og.jpg`,
     links: {
-        twitter: "https://twitter.com/miickasmt",
-        github: "https://github.com/mickasmt/next-saas-stripe-starter",
+        twitter: "",
+        github: "https://github.com/ai-hermes/doc-solver",
     },
-    mailSupport: "support@saas-starter.com"
+    mailSupport: "hehuan07@gmail.com"
 }

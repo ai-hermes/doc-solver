@@ -10,7 +10,6 @@ import Link from "next/link";
 import { cn } from "@/utils/cn";
 // import { useSigninModal } from "@/hooks/use-signin-modal";
 
-
 interface NavBarProps {
     user: Pick<User, "name" | "image" | "email"> | undefined
     items?: MainNavItem[]
@@ -39,22 +38,23 @@ export function NavBar({ user, items, children, rightElements, scroll = false }:
                         <Link
                             href="/login"
                             className={cn(
-                                buttonVariants({ variant: "outline", size: "sm" })
+                                buttonVariants({ size: "sm" })
                             )}
                         >
-                            Login Page
+                            Login
                         </Link>
                     ) : null}
 
-                    {user ? (
-                        <UserAccountNav user={user} />
-                    ) : (
-                        <Button
-                            className="px-3"
-                            variant="default" size="sm"
-                            onClick={() => { }}>
-                            Sign In
-                        </Button>
+                    {user && (
+                        <>
+                            <UserAccountNav user={user} />
+                            <Button
+                                className="px-3"
+                                variant="outline" size="sm"
+                                onClick={() => { }}>
+                                logout
+                            </Button>
+                        </>
                     )}
                 </div>
             </div>

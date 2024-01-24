@@ -12,14 +12,14 @@ export default function IndexPage() {
         <>
             <section className="space-y-6 pb-12 pt-16 lg:py-28">
                 <div className="container flex max-w-[64rem] flex-col items-center gap-5 text-center">
-                    <Link
-                        href="https://twitter.com/miickasmt/status/1719892161095745801"
+                    {/* <Link
+                        href=""
                         className={cn(buttonVariants({ variant: "outline", size: "sm" }), "animate-fade-up opacity-0")}
                         style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
                         target="_blank"
                     >
                         Introducing on <Icons.twitter className="ml-2 size-4" />
-                    </Link>
+                    </Link> */}
 
                     <h1
                         className="animate-fade-up text-balance font-urban text-4xl font-extrabold tracking-tight opacity-0 sm:text-5xl md:text-6xl lg:text-7xl"
@@ -27,7 +27,7 @@ export default function IndexPage() {
                     >
                         Kick off with a bang with{" "}
                         <span className="text-gradient_indigo-purple font-extrabold">
-                            SaaS Starter
+                            DocSolver
                         </span>
                     </h1>
 
@@ -35,15 +35,18 @@ export default function IndexPage() {
                         className="max-w-[42rem] animate-fade-up text-balance leading-normal text-muted-foreground opacity-0 sm:text-xl sm:leading-8"
                         style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
                     >
-                        Build your next project using Next.js 14, Prisma, Planetscale, Auth.js, Resend, React Email, Shadcn/ui, Stripe.
+                        {siteConfig.description}
                     </p>
 
                     <div
                         className="flex animate-fade-up justify-center space-x-2 opacity-0 md:space-x-4"
                         style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
                     >
-                        <Link href="/pricing" className={cn(buttonVariants({ size: "lg" }))}>
+                        {/* <Link href="/pricing" className={cn(buttonVariants({ size: "lg" }))}>
                             Go Pricing
+                        </Link> */}
+                        <Link href="/chat" className={cn(buttonVariants({ size: "lg" }))}>
+                            Try It!
                         </Link>
                         <Link
                             href={siteConfig.links.github}
@@ -54,7 +57,7 @@ export default function IndexPage() {
                             <Icons.gitHub className="mr-2 size-4" />
                             <p>
                                 <span className="hidden sm:inline-block">Star on</span>{" "}GitHub{" "}
-                                <span className="font-semibold">{nFormatter(0)}</span>
+                                <span className="font-semibold">{nFormatter()}</span>
                             </p>
                         </Link>
                     </div>
@@ -89,7 +92,7 @@ export default function IndexPage() {
 
 const features = [
     {
-        title: "Next.js 14",
+        title: "Next.js 13",
         href: "https://nextjs.org/",
         icon: (
             <svg className="h-6 w-auto" xmlns="http://www.w3.org/2000/svg" width="512px" height="104px" viewBox="0 0 512 104" version="1.1" preserveAspectRatio="xMidYMid">
