@@ -48,8 +48,9 @@ services:
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
+
   web:
-    image: "warjiang/doc-solver:canary"
+    build: .
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
     cap_add:
      - SYS_PTRACE
@@ -66,7 +67,7 @@ services:
     networks:
       - doc-solver
   worker:
-    image: "warjiang/doc-solver:canary"
+    build: .
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
     environment:
       - TZ=Asia/Shanghai
@@ -78,8 +79,6 @@ services:
       - weaviate
     networks:
       - doc-solver
-  
 
 networks:
   doc-solver:
-    
