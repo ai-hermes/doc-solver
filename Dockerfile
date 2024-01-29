@@ -21,6 +21,7 @@ RUN mkdir .next
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY scripts ./scripts
+COPY jobs ./jobs
 RUN chown -R nextjs:nodejs .
 
 RUN apt update && \
