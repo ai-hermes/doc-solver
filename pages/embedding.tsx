@@ -1,5 +1,4 @@
 import React from 'react';
-import { calculateMD5Async, readFileAsync } from '@/demos/utils';
 import { usePollingEffect } from '@/hooks/use-polling-effect';
 import COS from 'cos-js-sdk-v5';
 import type { CredentialData } from 'qcloud-cos-sts';
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Nullable } from '@/typings';
+import { calculateMD5Async, readFileAsync } from '@/lib/fsUtils';
 const cos = new COS({
     getAuthorization: function (_, callback) {
         fetch('/api/sts')
