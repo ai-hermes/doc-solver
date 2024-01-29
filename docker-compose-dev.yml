@@ -50,7 +50,10 @@ services:
       - doc-solver
 
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: runner
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
     cap_add:
      - SYS_PTRACE
@@ -66,8 +69,12 @@ services:
       - mysql
     networks:
       - doc-solver
+
   worker:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: runner
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
     environment:
       - TZ=Asia/Shanghai
