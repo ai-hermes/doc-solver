@@ -41,7 +41,7 @@ next-env.d.ts
 
 .yarn/
 .vscode
-docs/
+!docs/
 !components/docs/
 # demos
 # package-lock.json
