@@ -21,6 +21,7 @@ RUN mkdir .next
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY scripts ./scripts
+COPY prisma ./prisma
 COPY jobs ./jobs
 RUN chown -R nextjs:nodejs .
 
@@ -31,6 +32,7 @@ USER nextjs
 
 RUN npm install sharp @prisma/client -S && \
     npx prisma generate
+RUN npm install sharp @prisma/client -S
     
 EXPOSE 3000
 
