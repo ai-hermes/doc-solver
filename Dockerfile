@@ -43,7 +43,8 @@ FROM base AS worker
 
 WORKDIR /app
 COPY . .
-RUN npm config set registry https://registry.npmmirror.com && npm install
-RUN chown -R nextjs:nodejs .
+RUN npm install && \ 
+    mkdir -p /app/tmp/pdf && \
+    chown -R nextjs:nodejs .
 USER nextjs
 CMD ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
