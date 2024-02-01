@@ -52,3 +52,4 @@ demos/data
 tmp
 prisma/migrations
 demos
+.env.*

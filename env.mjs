@@ -76,6 +76,7 @@ const runtimeEnv =
             GITHUB_ID: process.env.GITHUB_ID,
             GITHUB_SECRET: process.env.GITHUB_SECRET,
         }
+console.log('runtimeEnv', runtimeEnv)
 export const env = createEnv({
     server: {
         // This is optional because it's only used in development.
