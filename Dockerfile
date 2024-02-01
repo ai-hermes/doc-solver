@@ -32,7 +32,6 @@ USER nextjs
 
 RUN npm install sharp @prisma/client -S && \
     npx prisma generate
-RUN npm install sharp @prisma/client -S
     
 EXPOSE 3000
 
