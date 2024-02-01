@@ -52,7 +52,7 @@ jobs:
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./.next
           name: next_out
@@ -73,7 +73,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download a Build Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: next_out
           path: ./.next
