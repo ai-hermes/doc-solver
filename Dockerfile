@@ -1,46 +1,49 @@
-FROM node:18.19.0-buster AS base
-
-# Production image, copy all the files and run next
-FROM base AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Base image, set user/group and workdir
+FROM node:20.11.0-buster AS base
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+RUN apt update && \
+    apt install -y netcat dnsutils
 
-COPY public ./public
+
+# Production image, copy all the files and run next
+FROM base AS web
+
+ENV NODE_ENV=production \
+    HOSTNAME=0.0.0.0 \
+    PORT=3000
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+WORKDIR /app
 
 # Set the correct permission for prerender cache
-RUN mkdir .next
+RUN chown -R nextjs:nodejs .
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+RUN mkdir .next
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY scripts ./scripts
 COPY prisma ./prisma
-COPY jobs ./jobs
-COPY lib ./lib
-COPY env.mjs tsconfig.json ./
-RUN chown -R nextjs:nodejs .
+COPY public ./public
 
-RUN apt update && \
-    apt install -y netcat
 
 USER nextjs
 
-RUN npm install sharp @prisma/client tsx -S && \
+RUN npm install sharp @prisma/client -S && \
     npx prisma generate
     
 EXPOSE 3000
+CMD ["/bin/sh", "-c","./scripts/bootstrap.sh"]
 
-ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
 
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+
+FROM base AS worker
+
+WORKDIR /app
+COPY . .
+RUN npm config set registry https://registry.npmmirror.com && npm install
+RUN chown -R nextjs:nodejs .
+USER nextjs
+CMD ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
