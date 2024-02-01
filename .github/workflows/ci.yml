@@ -101,7 +101,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ai-hermes/doc-solver-web
+          images: warjiang/doc-solver-web
           tags: type=match,pattern=\d.\d.\d
 
       - name: Build and push the Docker image
@@ -143,7 +143,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ai-hermes/doc-solver-worker
+          images: warjiang/doc-solver-worker
           tags: type=match,pattern=\d.\d.\d
 
       - name: Build and push the Docker image
