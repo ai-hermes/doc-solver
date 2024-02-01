@@ -5,12 +5,12 @@ on:
     tags: [ '**' ]
 
 jobs:
-  build-next.js:
+  build-next:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -64,7 +64,7 @@ jobs:
           clean: true
   
   build-web-image:
-    needs: build-next.js
+    needs: build-next
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -123,7 +123,7 @@ jobs:
           target: web
   
   build-worker-image:
-    needs: build-next.js
+    needs: build-next
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
