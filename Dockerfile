@@ -23,6 +23,8 @@ COPY .next/static ./.next/static
 COPY scripts ./scripts
 COPY prisma ./prisma
 COPY jobs ./jobs
+COPY lib ./lib
+COPY env.mjs tsconfig.json ./
 RUN chown -R nextjs:nodejs .
 
 RUN apt update && \
@@ -30,7 +32,7 @@ RUN apt update && \
 
 USER nextjs
 
-RUN npm install sharp @prisma/client -S && \
+RUN npm install sharp @prisma/client tsx -S && \
     npx prisma generate
     
 EXPOSE 3000
