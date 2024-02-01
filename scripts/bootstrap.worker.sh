@@ -14,8 +14,8 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] - $REDIS_HOST:$REDIS_PORT is available."
 
 
 # wait for weaviate ready
-WEAVIATE_HOST=redis
-WEAVIATE_PORT=6379
+WEAVIATE_HOST=weaviate
+WEAVIATE_PORT=8080
 until nc -z $WEAVIATE_HOST $WEAVIATE_PORT; do
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] - waiting for $WEAVIATE_HOST:$WEAVIATE_PORT..."
   sleep 1
