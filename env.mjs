@@ -1,7 +1,7 @@
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
 
-const isGitHubCI = process.env.GITHUB_ACTIONS === 'true';
+const isGitHubCI = false//process.env.GITHUB_ACTIONS === 'true';
 const runtimeEnv =
     isGitHubCI ?
         {
