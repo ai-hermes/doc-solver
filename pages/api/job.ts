@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { TestQueue } from '@/jobs/queues/test';
 import { getPrismaClient } from '@/lib/clients/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { Session, getServerSession } from 'next-auth';
@@ -28,31 +27,45 @@ async function POST(
             return
         }
     }
-    const { pdfUrl, pdfMd5Key } = req.body
+    const { source, pdfUrl, pdfMd5Key } = req.body
     const indexName = `Index_${pdfMd5Key.replace('pdf/', '')}`
     console.log('indexName', indexName)
 
-    const queue = TestQueue.getQueue()
-    const prisma = getPrismaClient()
-
     try {
+        const prisma = getPrismaClient()
+        const documentId = uuidv4();
+        const taskId = uuidv4();
+        await prisma.document.create({
+            data: {
+                id: documentId,
+                user_id: user.id,
+                object_key: pdfMd5Key,
+                task_id: taskId,
+                index_name: indexName
+            }
+        })
+
+        const queue = IngestQueue.getQueue()
         const createJobResp = await queue.createJob({
+            source,
+            indexName,
             pdfUrl,
-            pdfMd5Key
+            pdfMd5Key,
+            taskId
         }).save()
         console.log('createJobResp', createJobResp.id)
+
+
         await prisma.task.create({
             data: {
-                id: uuidv4(),
+                id: taskId,
                 user_id: user.id,
-                task_type: 'test',
-                task_name: `test-${Date.now()}`,
+                task_type: 'ingest',
+                task_name: `ingest-${Date.now()}`,
                 task_status: createJobResp.status,
                 bq_id: createJobResp.id
             }
         })
-
-
         res.status(200).json({
             code: 200,
             data: {

@@ -16,6 +16,7 @@ export default async function handler(
 ) {
     const { pdfUrl, pdfMd5Key } = req.body;
     console.log({ pdfUrl, pdfMd5Key })
+
     // const indexName = `Doc${pdfMd5Key}`
     const indexName = `Index_${pdfMd5Key.replace('pdf/', '')}`
     const queue = IngestQueue.getQueue()

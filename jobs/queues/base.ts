@@ -44,6 +44,15 @@ export abstract class BaseQueue<T extends Record<string, any>> {
     }
 
     protected static _getQueue(queueName: string) {
+        /** 
+         * cached queue in order to avoid the following error:
+         * - uncaughtException: ReplyError: ERR max number of clients reached
+         * - uncaughtException: AbortError: Redis connection lost and command aborted. 
+         *   It might have been processed.
+        */
+        if (queueMap[queueName]) {
+            return queueMap[queueName]
+        }
         const queue = new Queue(queueName, {
             redis: {
                 host: env.REDIS_HOST,
@@ -54,6 +63,7 @@ export abstract class BaseQueue<T extends Record<string, any>> {
             },
             isWorker: false,
         })
+        queueMap[queueName] = queue
         return queue;
     }
 
