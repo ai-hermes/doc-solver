@@ -19,20 +19,20 @@ ENV NODE_ENV=production \
 WORKDIR /app
 
 # Set the correct permission for prerender cache
-RUN chown -R nextjs:nodejs .
-
 RUN mkdir .next
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY scripts ./scripts
 COPY prisma ./prisma
 COPY public ./public
+RUN npm install sharp @prisma/client -S && \
+    npx prisma generate
 
+RUN chown -R nextjs:nodejs .
 
 USER nextjs
 
-RUN npm install sharp @prisma/client -S && \
-    npx prisma generate
+
     
 EXPOSE 3000
 CMD ["/bin/sh", "-c","./scripts/bootstrap.sh"]
