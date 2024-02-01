@@ -47,17 +47,7 @@ export default function Embedding() {
             if (!uploadInfo.key || !uploadInfo.url || !uploadInfo.jobId || uploadInfo.jobStatus === 'succeeded') {
                 return
             }
-            fetch('/api/job',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        jobId: uploadInfo.jobId
-                    })
-                }
-            ).then(res => res.json())
+            fetch(`/api/job?jobId=${uploadInfo.jobId}`).then(res => res.json())
                 .then(data => {
                     console.log('polling data', data)
                     setUploadInfo({

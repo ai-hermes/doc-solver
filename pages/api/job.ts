@@ -4,6 +4,7 @@ import { getPrismaClient } from '@/lib/clients/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { Session, getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
+import { IngestQueue } from '@/jobs/queues/ingest';
 
 interface JobParams {
     source: string;
@@ -108,15 +109,15 @@ async function DELETE(
 async function GET(
     req: NextApiRequest,
     res: NextApiResponse) {
-    const { id } = req.query
-    if (!id) {
+    const { jobId } = req.query
+    if (!jobId) {
         res.status(200).json({
             code: 500,
             message: `jobId is required`
         })
     }
-    const queue = TestQueue.getQueue()
-    const job = await queue.getJob(id as string)
+    const queue = IngestQueue.getQueue()
+    const job = await queue.getJob(jobId as string)
     if (!job) {
         res.status(200).json({
             code: 500,

@@ -21,7 +21,17 @@ export abstract class BaseQueue<T extends Record<string, any>> {
             },
             isWorker: true,
         })
-        this.queue.process(this.concurrency, this.handle.bind(this));
+        const handle = this.handle.bind(this)
+        this.queue.process(this.concurrency, async (job: {
+            id: string;
+            data: T;
+        }) => {
+            try {
+                await handle(job)
+            } catch (e) {
+                console.error('error in queue', e)
+            }
+        });
     }
 
     public ready() {
