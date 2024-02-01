@@ -2,7 +2,7 @@
 node_modules
 
 # Ignore .next directory
-.next
+# .next
 
 # Ignore .env files
 .env*

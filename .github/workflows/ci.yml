@@ -117,7 +117,6 @@ jobs:
           context: .
           push: true
           tags: |
-              ${{ steps.meta.outputs.tags }}
               ghcr.io/${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: web
@@ -168,7 +167,6 @@ jobs:
           context: .
           push: true
           tags: |
-              ${{ steps.meta.outputs.tags }}
               ghcr.io/${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: worker
