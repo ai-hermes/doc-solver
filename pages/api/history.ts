@@ -77,8 +77,15 @@ export default async function handler(
     const userId = user!.id
     switch (req.method) {
         case 'GET':
-            const { documentId } = req.body
-            const history = await getHistoryData(userId, documentId);
+            const { documentId } = req.query
+            if (!documentId) {
+                res.status(200).json({
+                    code: 400,
+                    message: `documentId is required`
+                })
+                return
+            }
+            const history = await getHistoryData(userId, documentId as string);
             res.status(200).json({
                 code: 200,
                 data: history

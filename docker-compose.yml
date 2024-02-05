@@ -70,7 +70,7 @@ services:
     networks:
       - doc-solver
   worker:
-    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver-worker:0.1.8"
+    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver-worker:0.1.9"
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
     # entrypoint: ["/bin/bash", "-c","sleep infinity"]
     environment:

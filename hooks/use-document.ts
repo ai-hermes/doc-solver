@@ -1,17 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod"
 
 // Document type should follow the schema from the database
-export interface Document {
-    id: string;
-    user_id: string;
-    object_key: string;
-    show_name: string;
-    index_name: string;
-    task_id: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
-}
+export const documentSchema = z.object({
+    id: z.string(),
+    user_id: z.string(),
+    object_key: z.string(),
+    show_name: z.string(),
+    index_name: z.string(),
+    task_id: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    // delete_at: z.null().or(z.string()),
+})
+
 
 export function useDocumentDetail(documentId: string) {
     const { data: document, isLoading, isError } = useQuery({
