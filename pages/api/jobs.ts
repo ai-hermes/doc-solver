@@ -1,14 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getPrismaClient } from '@/lib/clients/prisma';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from './auth/[...nextauth]';
+import { checkLogin } from './user';
 
-
-async function GET(_: NextApiRequest, res: NextApiResponse, user: Session['user']) {
+async function getJobsByUser(userId: string) {
     const prisma = getPrismaClient()
     const tasks = await prisma.task.findMany({
         where: {
-            user_id: user.id
+            user_id: userId
         },
         orderBy: {
             'created_at': 'desc'
@@ -22,23 +20,36 @@ async function GET(_: NextApiRequest, res: NextApiResponse, user: Session['user'
             bq_id: true,
         }
     })
-    res.status(200).json({
-        code: 200,
-        data: tasks
-    })
+    return tasks;
 }
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getServerSession(req, res, authOptions)
-    if (!session || !session.user) {
+    const [user, isLogin] = await checkLogin(req, res)
+    if (!isLogin) {
         res.status(401)
         return
     }
-    switch (req.method) {
-        case 'GET':
-            return GET(req, res, session.user);
-        default:
-            res.setHeader('Allow', ['GET']);
-            res.status(405).end(`Method ${req.method} Not Allowed`);
+    const userId = user!.id;
+    try {
+        switch (req.method) {
+            case 'GET': {
+                const tasks = await getJobsByUser(userId)
+                res.status(200).json({
+                    code: 200,
+                    data: tasks
+                })
+            }
+            default:
+                res.status(405).end(`Method ${req.method} Not Allowed`);
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            res.status(200)
+                .json({
+                    code: 500,
+                    message: e.message
+                })
+        }
     }
 }

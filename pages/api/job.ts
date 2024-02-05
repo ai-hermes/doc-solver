@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getPrismaClient } from '@/lib/clients/prisma';
 import { v4 as uuidv4 } from 'uuid';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from './auth/[...nextauth]';
 import { IngestQueue } from '@/jobs/queues/ingest';
+import { checkLogin } from './user';
 
 interface JobParams {
     source: string;
@@ -11,40 +10,26 @@ interface JobParams {
     pdfMd5Key: string;
 }
 
-interface JobNextApiRequest extends NextApiRequest {
-    body: JobParams;
+async function getJobDetail(
+    jobId: string
+) {
+    const queue = IngestQueue.getQueue()
+    return queue.getJob(jobId)
 }
-async function POST(
-    req: JobNextApiRequest,
-    res: NextApiResponse,
-    user: Session['user']) {
-    for (const key of ['source', 'pdfUrl', 'pdfMd5Key']) {
-        if (!req.body[key as keyof JobParams]) {
-            res.status(200).json({
-                code: 500,
-                message: `${key} is required`
-            })
-            return
-        }
-    }
-    const { source, pdfUrl, pdfMd5Key } = req.body
+
+async function createJob(
+    userId: string,
+    source: string,
+    pdfUrl: string,
+    pdfMd5Key: string
+) {
     const indexName = `Index_${pdfMd5Key.replace('pdf/', '')}`
     console.log('indexName', indexName)
+    const prisma = getPrismaClient()
+    const documentId = uuidv4();
+    const taskId = uuidv4();
 
     try {
-        const prisma = getPrismaClient()
-        const documentId = uuidv4();
-        const taskId = uuidv4();
-        await prisma.document.create({
-            data: {
-                id: documentId,
-                user_id: user.id,
-                object_key: pdfMd5Key,
-                task_id: taskId,
-                index_name: indexName
-            }
-        })
-
         const queue = IngestQueue.getQueue()
         const createJobResp = await queue.createJob({
             source,
@@ -55,114 +40,129 @@ async function POST(
         }).save()
         console.log('createJobResp', createJobResp.id)
 
-
         await prisma.task.create({
             data: {
                 id: taskId,
-                user_id: user.id,
+                user_id: userId,
                 task_type: 'ingest',
                 task_name: `ingest-${Date.now()}`,
                 task_status: createJobResp.status,
                 bq_id: createJobResp.id
             }
         })
-        res.status(200).json({
-            code: 200,
+
+        await prisma.document.create({
             data: {
-                jobId: createJobResp.id,
+                id: documentId,
+                user_id: userId,
+                object_key: pdfMd5Key,
+                task_id: taskId,
+                show_name: source,
+                index_name: indexName
             },
-            message: `creat job success`
         })
+        return [createJobResp.id, true];
     } catch (e) {
-        res.status(200).json({
-            code: 500,
-            message: `creat job error: ${e}`
-        })
-        return
+        console.error(e)
+        return ['', false,]
     }
 }
 
-async function DELETE(
-    req: NextApiRequest,
-    res: NextApiResponse,
-    user: Session['user']) {
-    const jobId = req.body.id as string;
-    if (!jobId) {
-        res.status(200).json({
-            code: 500,
-            message: `jobId is required`
+async function deleteJob(
+    userId: string,
+    jobId: string
+) {
+    const prismaClient = getPrismaClient()
+    try {
+        await prismaClient.task.delete({
+            where: {
+                id: jobId,
+                user_id: userId
+            }
         })
+        return true
+    } catch (e) {
+        return false
     }
-
-    const prisma = getPrismaClient()
-    const cnt = await prisma.task.count({
-        where: {
-            id: jobId,
-            user_id: user.id
-        }
-    })
-    if (cnt === 0) {
-        res.status(200).json({
-            code: 200,
-            message: `job not match login user, ignore`
-        })
-        return
-    }
-    await prisma.task.delete({
-        where: {
-            id: jobId
-        }
-    })
-    res.status(200).json({
-        code: 200,
-        message: `job deleted`
-    })
-}
-
-async function GET(
-    req: NextApiRequest,
-    res: NextApiResponse) {
-    const { jobId } = req.query
-    if (!jobId) {
-        res.status(200).json({
-            code: 500,
-            message: `jobId is required`
-        })
-    }
-    const queue = IngestQueue.getQueue()
-    const job = await queue.getJob(jobId as string)
-    if (!job) {
-        res.status(200).json({
-            code: 500,
-            message: 'job not found'
-        })
-        return
-    }
-    res.status(200).json({
-        code: 200,
-        data: {
-            jobId: job.id,
-            status: job.status,
-        }
-    })
-
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getServerSession(req, res, authOptions)
-    if (!session || !session.user) {
+    const [user, isLogin] = await checkLogin(req, res)
+    if (!isLogin) {
         res.status(401)
         return
     }
-    switch (req.method) {
-        case 'GET':
-            return GET(req, res);
-        case 'POST':
-            return POST(req, res, session.user);
-        case 'DELETE':
-            return DELETE(req, res, session.user);
-        default:
-            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-            res.status(405).end(`Method ${req.method} Not Allowed`);
+    const userId = user!.id;
+    try {
+        switch (req.method) {
+            case 'GET': {
+                const { jobId } = req.query
+                if (!jobId) {
+                    throw new Error('jobId is required')
+                }
+                const job = await getJobDetail(jobId as string)
+                res.status(200).json({
+                    code: 200,
+                    data: {
+                        jobId: job.id,
+                        status: job.status,
+                    }
+                })
+            }
+            case 'POST': {
+                // return POST(req, res, session.user);
+                for (const key of ['source', 'pdfUrl', 'pdfMd5Key']) {
+                    if (!req.body[key as keyof JobParams]) {
+                        res.status(200).json({
+                            code: 500,
+                            message: `${key} is required`
+                        })
+                        return
+                    }
+                }
+                const { source, pdfUrl, pdfMd5Key } = req.body
+                const [jobId, createJobOk] = await createJob(userId, source, pdfUrl, pdfMd5Key)
+                if (createJobOk) {
+                    res.status(200).json({
+                        code: 200,
+                        data: {
+                            jobId,
+                        },
+                        message: `creat job success`
+                    })
+                } else {
+                    res.status(200).json({
+                        code: 500,
+                        message: `creat job error`
+                    })
+                }
+            }
+            case 'DELETE': {
+                const { jobId } = req.body
+                const deleteJobOk = await deleteJob(userId, jobId as string)
+                if (deleteJobOk) {
+                    res.status(200).json({
+                        code: 200,
+                        message: `delete job success`
+                    })
+                } else {
+                    res.status(200).json({
+                        code: 500,
+                        message: `delete job error`
+                    })
+                }
+            }
+            default:
+                res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+                res.status(405).end(`Method ${req.method} Not Allowed`);
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            res.status(200)
+                .json({
+                    code: 500,
+                    message: e.message
+                })
+        }
     }
 }

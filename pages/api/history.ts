@@ -1,6 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from 'next-auth';
-import { authOptions } from "./auth/[...nextauth]";
 import _ from 'lodash';
 import { Document } from 'langchain/document';
 import { getBufferMemory } from '@/lib/clients/llm';
@@ -8,7 +6,9 @@ import { getPrismaClient } from '@/lib/clients/prisma';
 
 import { Message } from '@/types/chat';
 import { Highlight } from "@/types/model";
+import { checkLogin } from "./user";
 
+// get history data from redis
 export async function getHistoryData(userId: string, documentId: string) {
     /*
     1. get auth info from cookie and get user info
@@ -23,7 +23,6 @@ export async function getHistoryData(userId: string, documentId: string) {
     const historyMessages = await memory.chatHistory.getMessages()
     /*
     message example:
-
     */
     const prisma = getPrismaClient();
     const hsList: Array<string> = historyMessages.map(item => item.lc_kwargs['hs']).filter(Boolean)
@@ -70,16 +69,21 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
 ) {
-
-    const session = await getServerSession(req, res, authOptions)
-    const userId = session?.user.id
-    if (!userId) {
+    const [user, isLogin] = await checkLogin(req, res)
+    if (!isLogin) {
         res.status(401)
         return
     }
-    // [todo][dingwenjiang] extract documentId from request
-    const documentId = 'd6db6fd34c5ea56fa1dc8f55df17830e';
-    const messages = await getHistoryData(userId, documentId);
-
-    res.status(200).json(messages);
+    const userId = user!.id
+    switch (req.method) {
+        case 'GET':
+            const { documentId } = req.body
+            const history = await getHistoryData(userId, documentId);
+            res.status(200).json({
+                code: 200,
+                data: history
+            });
+        default:
+            res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
 }
