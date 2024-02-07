@@ -42,6 +42,7 @@ model Task {
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime  @default(now()) @db.Timestamp(0)
   deleted_at  DateTime? @db.Timestamp(0)
+  Document    Document?
 
   @@map("tasks")
 }
@@ -56,6 +57,7 @@ model Document {
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime  @default(now()) @db.Timestamp(0)
   deleted_at DateTime? @db.Timestamp(0)
+  task       Task      @relation(fields: [task_id], references: [id])
 
   @@map("documents")
 }
