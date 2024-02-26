@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UserAccountNav } from "@/components/layout/user-account-nav";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -7,7 +7,8 @@ import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
 import useScroll from "@/hooks/use-scroll";
 import { useSession } from "next-auth/react";
-
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable'
 interface LayoutProps {
     children: React.ReactNode;
     rightElements?: React.ReactNode
@@ -19,12 +20,13 @@ export default function ContentLayout({
     rightElements,
     scroll = false
 }: LayoutProps) {
+    const [open, setOpen] = useState(true)
     const scrolled = useScroll(50);
     const { data } = useSession()
     const user = data?.user;
 
     return (
-        <div>
+        <Collapsible open={open} onOpenChange={setOpen}>
             <header
                 className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${scroll ? scrolled
                     ? "border-b"
@@ -33,7 +35,9 @@ export default function ContentLayout({
             >
                 <div className="container flex h-16 items-center justify-between py-4">
                     <div className='flex items-center'>
-                        <Icons.fold />
+                        <CollapsibleTrigger>
+                            {open ? <Icons.fold /> : <Icons.open />}
+                        </CollapsibleTrigger>
                         <div className='mx-1 text-slate-300'>｜</div>
                         <Link href="/upload" className="hidden items-center space-x-2 md:flex">
                             <Icons.logo />
@@ -71,7 +75,18 @@ export default function ContentLayout({
                     </div>
                 </div>
             </header>
-            {children}
-        </div>
+            <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={15}>
+                    <CollapsibleContent className='overflow-hidden p-3'>
+                        {/* pdf file list */}
+                        <div className='text-lg font-semibold'>Title</div>
+                    </CollapsibleContent>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel>
+                    {children}
+                </ResizablePanel>
+            </ResizablePanelGroup>
+        </Collapsible>
     )
 }
