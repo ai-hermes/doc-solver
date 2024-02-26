@@ -6,7 +6,7 @@
   "author": "https://github.com/ai-hermes",
   "type": "module",
   "scripts": {
-    "dev": "cp .env.dev .env.local && next dev",
+    "dev": "cp .env.dev .env.local && next dev -p 4000",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --noEmit",

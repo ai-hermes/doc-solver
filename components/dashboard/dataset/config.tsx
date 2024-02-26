@@ -24,7 +24,7 @@ export const labels = [
     },
 ]
 
-export const statuses = [
+export const statusesbak = [
     {
         value: "backlog",
         label: "Backlog",
@@ -51,7 +51,24 @@ export const statuses = [
         icon: CrossCircledIcon,
     },
 ]
-
+// created/successed/failed
+export const statuses = [
+    {
+        value: "created",
+        label: "created",
+        icon: StopwatchIcon,
+    },
+    {
+        value: "successed",
+        label: "successed",
+        icon: CircleIcon,
+    },
+    {
+        value: "failed",
+        label: "faileds",
+        icon: CrossCircledIcon,
+    }
+]
 export const priorities = [
     {
         label: "Low",

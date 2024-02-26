@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Nullable } from '@/typings';
 import { calculateMD5Async, readFileAsync } from '@/lib/fsUtils';
+import { getObjectUrl } from '@/lib/cos';
 const cos = new COS({
     getAuthorization: function (_, callback) {
         fetch('/api/sts')
@@ -109,13 +110,18 @@ export default function Embedding() {
                                     },
                                     onFileFinish: function (err, data, options) {
                                         console.log(options.Key + '上传' + (err ? '失败' : '完成'));
+                                        setUploadInfo({
+                                            ...uploadInfo,
+                                            url: getObjectUrl(`pdf/${md5}`),
+                                            key: `pdf/${md5}`,
+                                        })
                                     },
                                 })
                                 // uploadFileResp.statusCode === 200 上传成功
                                 // uploadFileResp.Location 访问的url
                                 // key在前端自动生成
                                 console.log('uploadFileResp', uploadFileResp)
-                                setSelectedFile(null)
+                                // setSelectedFile(null)
                                 // cos.putObject({})
                                 // const z = await cos.getBucket({
                                 //     Bucket: 'doc-solver-dev-1251009550', /* 填入您自己的存储桶，必须字段 */
@@ -144,13 +150,18 @@ export default function Embedding() {
                     >
                         <Button
                             onClick={() => {
-                                fetch('/api/embedding', {
+                                console.log('uploadInfo', uploadInfo)
+                                console.log('selectedFile', selectedFile)
+                                if (!selectedFile) return
+                                // return
+                                fetch('/api/job', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
                                     body: JSON.stringify({
                                         // jobId: uploadInfo.jobId
+                                        source: selectedFile.name,
                                         pdfUrl: uploadInfo.url,
                                         pdfMd5Key: uploadInfo.key
                                     })

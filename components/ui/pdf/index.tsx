@@ -31,6 +31,11 @@ interface State {
     isMounted: boolean;
 }
 
+interface Props {
+    url: string;
+    highlights: IHighlight[]
+}
+
 const getNextId = () => String(Math.random()).slice(2);
 
 const parseIdFromHash = () =>
@@ -86,12 +91,22 @@ const initialUrl = PRIMARY_PDF_URL;
 //         },
 //     }
 // ]
-class App extends Component<{ highlights: IHighlight[] }, State> {
+class App extends Component<Props, State> {
     state = {
         url: initialUrl,
         highlights: [] as IHighlight[],
         isMounted: false
     };
+
+    constructor(props: Props) {
+        super(props);
+        console.log('props', props)
+        this.state = {
+            url: props.url,
+            highlights: [],
+            isMounted: false
+        }
+    }
 
     resetHighlights = () => {
         this.setState({
@@ -268,8 +283,8 @@ class App extends Component<{ highlights: IHighlight[] }, State> {
     }
 }
 
-const AppWrapper = () => {
+const AppWrapper = ({ url }: { url: string }) => {
     const highlights = useAtomValue(hightlightAtom)
-    return <App highlights={highlights} />
+    return <App highlights={highlights} url={url} />
 }
 export default AppWrapper;

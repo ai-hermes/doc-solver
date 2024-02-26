@@ -12,6 +12,7 @@ import { getClientCOSClient } from '@/lib/clients/jscos';
 import { env } from 'env.mjs';
 import { columns } from "@/components/dashboard/dataset/columns";
 import { DataTable } from "@/components/dashboard/dataset/data-table";
+import { useDocumentList } from "@/hooks/use-document";
 
 const cos = getClientCOSClient();
 export const metadata = {
@@ -21,6 +22,7 @@ export const metadata = {
 
 function DatasetPage() {
     const [selectedFile, setSelectedFile] = useState<File>();
+    const { documents } = useDocumentList()
     return (
         <DashboardShell>
             <DashboardHeader
@@ -98,7 +100,7 @@ function DatasetPage() {
                         </Button>
                     </CardContent>
                 </Card>
-                <DataTable data={[]} columns={columns} />
+                <DataTable data={documents} columns={columns} />
             </div>
         </DashboardShell>
     )

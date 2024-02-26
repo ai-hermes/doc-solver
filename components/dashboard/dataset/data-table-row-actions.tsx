@@ -8,18 +8,19 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
+    // DropdownMenuRadioGroup,
+    // DropdownMenuRadioItem,
+    // DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
+    // DropdownMenuSub,
+    // DropdownMenuSubContent,
+    // DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { labels } from "./config"
-import { taskSchema } from "./schema"
+// import { labels } from "./config"
+import { documentSchema } from "@/hooks/use-document"
+import { useRouter } from 'next/router'
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -28,8 +29,8 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
     row,
 }: DataTableRowActionsProps<TData>) {
-    const task = taskSchema.parse(row.original)
-
+    const document = documentSchema.parse(row.original)
+    const router = useRouter()
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -43,6 +44,14 @@ export function DataTableRowActions<TData>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
                 <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => {
+                        router.push(`/chat/${document.id}`)
+                    }}
+                >
+                    Chat
+                </DropdownMenuItem>
+                {/*
                 <DropdownMenuItem>Make a copy</DropdownMenuItem>
                 <DropdownMenuItem>Favorite</DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -59,6 +68,7 @@ export function DataTableRowActions<TData>({
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuSeparator />
+                */}
                 <DropdownMenuItem>
                     Delete
                     <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
