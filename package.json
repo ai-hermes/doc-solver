@@ -73,6 +73,7 @@
     "react-markdown": "^8.0.5",
     "react-pdf": "^7.5.1",
     "react-pdf-highlighter": "^6.1.0",
+    "react-resizable-panels": "^1.0.9",
     "react-rnd": "^10.1.10",
     "request": "^2.88.2",
     "sharp": "^0.33.0",
