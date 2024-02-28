@@ -211,7 +211,7 @@ export default function Home({
             e.preventDefault();
         }
     };
-    // const url = 'https://savemoney.spotty.com.cn/poems/raft.pdf'
+    const url = 'https://savemoney.spotty.com.cn/poems/raft.pdf'
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
         setIsMounted(true);
@@ -274,7 +274,7 @@ export default function Home({
 
                 <div className="grid grid-cols-8 gap-2 ">
                     <div className='col-span-4 '>
-                        <PdfComponent />
+                        <PdfComponent url={url} />
                     </div>
                     <div className='col-span-4 overflow-hidden'>
                         <h1 className="text-2xl font-bold leading-[1.1] text-center">
