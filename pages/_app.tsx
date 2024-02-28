@@ -1,4 +1,5 @@
 import '@/styles/global.css';
+import "@/styles/mdx.css"
 
 import React from 'react';
 import type { ReactElement, ReactNode } from 'react'

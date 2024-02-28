@@ -27,6 +27,7 @@
     "@typescript-eslint/ban-ts-comment": "warn",
     "react/prop-types": "off",
     "no-use-before-define": "off",
-    "react/no-unknown-property": "warn"
+    "react/no-unknown-property": "warn",
+    "react/react-in-jsx-scope": "off"
   }
 }

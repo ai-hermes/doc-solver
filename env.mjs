@@ -38,7 +38,8 @@ const runtimeEnv =
 
             // auth
             GITHUB_ID: '*',
-            GITHUB_SECRET: '*'
+            GITHUB_SECRET: '*',
+            NEXT_PUBLIC_APP_URL: "*"
         } :
         {
             // openai
@@ -71,6 +72,7 @@ const runtimeEnv =
             QCLOUD_REGION: process.env.QCLOUD_REGION,
             NEXT_PUBLIC_QCLOUD_BUCKET: process.env.NEXT_PUBLIC_QCLOUD_BUCKET,
             NEXT_PUBLIC_QCLOUD_REGION: process.env.NEXT_PUBLIC_QCLOUD_REGION,
+            NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 
             // auth
             GITHUB_ID: process.env.GITHUB_ID,
@@ -126,13 +128,14 @@ export const env = createEnv({
         // RESEND_API_KEY: z.string().min(1),
         // STRIPE_API_KEY: z.string().min(1),
         // STRIPE_WEBHOOK_SECRET: z.string().min(1),
+        NEXT_PUBLIC_APP_URL: z.string().min(1),
     },
     client: {
         NEXT_PUBLIC_QCLOUD_BUCKET: z.string().min(1),
         NEXT_PUBLIC_QCLOUD_REGION: z.string().min(1),
         // NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
         // NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-        // NEXT_PUBLIC_APP_URL: z.string().min(1),
+        NEXT_PUBLIC_APP_URL: z.string().min(1),
         // NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID: z.string().min(1),
         // NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID: z.string().min(1),
         // NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID: z.string().min(1),
