@@ -24,3 +24,5 @@ Thumbs.db
 .husky
 .devcontainer
 demos
+tmp
+node_modules
