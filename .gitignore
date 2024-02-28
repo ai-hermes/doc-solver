@@ -53,3 +53,4 @@ tmp
 prisma/migrations
 demos
 .env.*
+.contentlayer
