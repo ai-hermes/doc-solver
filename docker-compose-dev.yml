@@ -1,0 +1,91 @@
+version: "3.9"
+services:
+  mysql:
+    environment:
+    - MYSQL_ROOT_PASSWORD=A74yJikLWdwp
+    - TZ=Asia/Shanghai
+    image: "mysql:8.0.32"
+    ports:
+    - "3306:3306"
+    volumes:
+    # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./demos/data/mysql-data:/var/lib/mysql
+    networks:
+    - doc-solver
+
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: semitechnologies/weaviate:1.23.0
+    ports:
+    - 8080:8080
+    - 50051:50051
+    volumes:
+    - ./demos/data/weaviate-data:/var/lib/weaviate
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'node1'
+    networks:
+      - doc-solver
+      
+  redis:
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./demos/data/redis-data:/data
+    command: redis-server --requirepass docsolver123456
+    networks:
+      - doc-solver
+
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+    cap_add:
+     - SYS_PTRACE
+    security_opt:
+     - "seccomp:unconfined"
+    ports:
+     - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - .env:/app/.env
+    depends_on:
+      - mysql
+    networks:
+      - doc-solver
+
+  worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - .env:/app/.env
+    depends_on:
+      - mysql
+      - redis
+      - weaviate
+    networks:
+      - doc-solver
+
+networks:
+  doc-solver:

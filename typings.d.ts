@@ -1,5 +1,5 @@
 export type Nullable<T> = T | null;
-
+export type { CredentialData } from 'qcloud-cos-sts';
 
 // next-auth-extensions.d.ts
 // next-auth-extensions.d.ts

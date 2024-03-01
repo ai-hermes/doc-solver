@@ -1,20 +1,16 @@
-name: Check NextJs build
+name: Build Next.js and Images
 
 on:
   push:
-    branches:
-    - main
-    - master
-    - feature/*
-env:
-  IMAGE_TAG: canary
+    tags: [ '**' ]
 
 jobs:
-  build:
+  build-next:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -47,6 +43,8 @@ jobs:
                 ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Write .env file
+        run: echo "${{ vars.ENV_FILE }}" > .env
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
@@ -64,12 +62,27 @@ jobs:
           local_path: .next/static
           remote_path: doc-solver/_next/static
           clean: true
-  build-image:
-    needs: build
+  
+  build-web-image:
+    needs: build-next
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Regex matching
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.ref_name }}
+          regex: 'v[0-9]+.[0-9]+.[0-9]+'
+
+      - name: Exit if tag not matched
+        if: ${{ steps.regex-match.outputs.match == '' }}
+        run: |
+          echo "Tag was not matched"
+          exit 1
+
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2
         with:
@@ -77,47 +90,67 @@ jobs:
           path: ./.next
       - name: Unzip Artifact
         run: tar xf ./.next/artifact.tar -C ./.next
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: all
-  
-      - name: Set up docker buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          version: latest
       
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-    
-      - name: Login to Github Package
+      
+      - name: Extract metadata for the Docker image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: warjiang/doc-solver-web
+          tags: type=match,pattern=\d.\d.\d
+
+      - name: Build and push the Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          target: web
+  
+  build-worker-image:
+    needs: build-next
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regex matching
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.ref_name }}
+          regex: 'v[0-9]+.[0-9]+.[0-9]+'
+
+      - name: Exit if tag not matched
+        if: ${{ steps.regex-match.outputs.match == '' }}
+        run: |
+          echo "Tag was not matched"
+          exit 1
+      
+      - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{secrets.GH_USER}}
-          password: ${{secrets.GH_PASSWORD}}
-
-      - name: Get tags
-        id: get-tags
-        run: |
-            VERSION=canary
-            if [[ $GITHUB_REF == refs/tags/* ]]; then
-              VERSION=${GITHUB_REF#refs/tags/v}
-            fi
-            echo "IMAGE_TAG=${VERSION}" >> $GITHUB_ENV
-      - name: Build image and push
-        uses: docker/build-push-action@v4
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Extract metadata for the Docker image
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-            context: .
-            # platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-            platforms: linux/amd64
-            push: true
-            tags: |
-              warjiang/doc-solver:${{ env.IMAGE_TAG }}
-              ghcr.io/ai-hermes/doc-solver:${{ env.IMAGE_TAG }}
-            cache-from: type=gha
-            cache-to: type=gha,mode=max
+          images: warjiang/doc-solver-worker
+          tags: type=match,pattern=\d.\d.\d
+
+      - name: Build and push the Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          target: worker

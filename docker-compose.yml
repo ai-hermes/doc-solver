@@ -4,7 +4,7 @@ services:
     environment:
     - MYSQL_ROOT_PASSWORD=A74yJikLWdwp
     - TZ=Asia/Shanghai
-    image: "mysql:8.0.32"
+    image: "${REGISTRY:-docker.io}/mysql:8.0.32"
     ports:
     - "3306:3306"
     volumes:
@@ -21,7 +21,7 @@ services:
     - '8080'
     - --scheme
     - http
-    image: semitechnologies/weaviate:1.23.0
+    image: "${REGISTRY:-docker.io}/semitechnologies/weaviate:1.23.0"
     ports:
     - 8080:8080
     - 50051:50051
@@ -39,7 +39,7 @@ services:
       - doc-solver
       
   redis:
-    image: redis:6-alpine
+    image: "${REGISTRY:-docker.io}/redis:6-alpine"
     restart: always
     ports:
       - "6379:6379"
@@ -48,6 +48,43 @@ services:
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
+  web:
+    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver:canary"
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+    cap_add:
+     - SYS_PTRACE
+    security_opt:
+     - "seccomp:unconfined"
+    ports:
+     - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai
+      - GITHUB_ACTIONS=true
+    env_file:
+      - .env.prod
+    # volumes:
+    #   - .env.prod:/app/.env
+    #   - ./scripts/bootstrap.sh:/app/scripts/bootstrap.sh
+    depends_on:
+      - mysql
+    networks:
+      - doc-solver
+  worker:
+    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver-worker:0.1.9"
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
+    # entrypoint: ["/bin/bash", "-c","sleep infinity"]
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - .env.prod:/app/.env
+    depends_on:
+      - mysql
+      - redis
+      - weaviate
+    networks:
+      - doc-solver
+  
 
 networks:
   doc-solver:
+    

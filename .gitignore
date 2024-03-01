@@ -41,7 +41,7 @@ next-env.d.ts
 
 .yarn/
 .vscode
-docs/
+!docs/
 !components/docs/
 # demos
 # package-lock.json
@@ -51,3 +51,6 @@ demos/vector-admin
 demos/data
 tmp
 prisma/migrations
+demos
+.env.*
+.contentlayer

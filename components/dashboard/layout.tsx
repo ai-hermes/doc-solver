@@ -17,16 +17,15 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
     const { data: session } = useSession()
     const user = session?.user
-    console.log('user', session)
-    if (!session?.user) {
+    if (!user) {
         return <></>
     }
 
     return (
         <div className="flex min-h-screen flex-col space-y-6">
-            <NavBar user={user} items={dashboardConfig.mainNav} scroll={false} />
+            <NavBar className='w-full px-[30px]' user={user} items={dashboardConfig.mainNav} scroll={false} />
 
-            <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+            <div className="px-[30px] grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
                 <aside className="hidden w-[200px] flex-col md:flex">
                     <DashboardNav items={dashboardConfig.sidebarNav} />
                 </aside>

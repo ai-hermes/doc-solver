@@ -4,6 +4,12 @@ import type { Icon } from "lucide-react"
 
 import { Icons } from "@/components/shared/icons"
 
+export type NavLink = {
+    title: string,
+    href: string,
+    items: SidebarNavItem
+}
+
 export type NavItem = {
     title: string
     href: string
@@ -12,21 +18,20 @@ export type NavItem = {
 
 export type MainNavItem = NavItem
 
+export type hrefOrItems = {
+    title: string;
+    href: string;
+    items?: hrefOrItems[]
+} | {
+    title: string;
+    href?: string
+    items: hrefOrItems[]
+}
 export type SidebarNavItem = {
-    title: string
     disabled?: boolean
     external?: boolean
     icon?: keyof typeof Icons
-} & (
-        | {
-            href: string
-            items?: never
-        }
-        | {
-            href?: string
-            items: NavLink[]
-        }
-    )
+} & hrefOrItems
 
 export type SiteConfig = {
     name: string

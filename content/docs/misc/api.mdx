@@ -1,0 +1,155 @@
+---
+title: API Document
+description: API Document for doc-solver.
+---
+
+# 文档相关
+## 1. 获取用户关联的文档
+请求参数: N/A<br/>
+请求案例:
+```bash
+curl 'http://localhost:4000/api/documents' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Cookie: ${Cookie}' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: http://localhost:4000/chat/106ee9f4-5651-4443-b34e-3d1cd131ff75' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0' \
+  -H 'sec-ch-ua: "Not A(Brand";v="99", "Microsoft Edge";v="121", "Chromium";v="121"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"' \
+  --compressed
+```
+
+
+响应结果: `Response[Document[]]`<br/>
+响应案例:
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "id": "57b5efdf-b5b8-4ff4-a474-8596bd4aeeca",
+            "user_id": "clt2hfww6000011hxgaue69nw",
+            "object_key": "pdf/0733a2e59ea76b3c031f85dc9ca660df",
+            "show_name": "Izacard 等 - 2022 - Atlas Few-shot Learning with Retrieval Augmented .pdf",
+            "index_name": "Index_0733a2e59ea76b3c031f85dc9ca660df",
+            "task_id": "6beadb50-f0ca-4d78-862b-7a9673d8742b",
+            "created_at": "2024-02-05T11:55:19.000Z",
+            "updated_at": "2024-02-05T11:55:19.000Z",
+            "deleted_at": null,
+            "task": {
+                "id": "6beadb50-f0ca-4d78-862b-7a9673d8742b",
+                "user_id": "cls8vckdp00057ib5oz8didfq",
+                "bq_id": "15",
+                "task_type": "ingest",
+                "task_name": "ingest-1707134119367",
+                "task_status": "successed",
+                "created_at": "2024-02-05T11:55:19.000Z",
+                "updated_at": "2024-02-05T11:55:19.000Z",
+                "deleted_at": null
+            }
+        }
+    ]
+}
+```
+
+
+## 2. 获取文档详情
+请求参数: 
+| 字段                | 含义       | 类型           |
+| ----------------------- | ------------ | ------------------ |
+| document_id  | 文档id  | path variable       |
+
+请求案例:
+```bash /106ee9f4-5651-4443-b34e-3d1cd131ff75/
+curl 'http://localhost:4000/api/document/106ee9f4-5651-4443-b34e-3d1cd131ff75' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Cookie: ${Cookie}' \
+  -H 'Pragma: no-cache' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0' \
+  -H 'sec-ch-ua: "Not A(Brand";v="99", "Microsoft Edge";v="121", "Chromium";v="121"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"' \
+  --compressed
+```
+
+
+响应结果: `Response[Document]`<br/>
+响应案例:
+```json
+{
+    "code": 200,
+    "data": {
+        "id": "bdd70370-5f0b-44ff-8ba2-091e74dc4141",
+        "user_id": "clt2hfww6000011hxgaue69nw",
+        "object_key": "pdf/17e362e7e5ba6ffb6248c4a2e923e63e",
+        "show_name": "Vaswani 等 - 2017 - Attention Is All You Need.pdf",
+        "index_name": "Index_17e362e7e5ba6ffb6248c4a2e923e63e",
+        "task_id": "7920830e-1f0a-4f2b-95c5-484af38f02d6",
+        "created_at": "2024-02-05T11:59:59.000Z",
+        "updated_at": "2024-02-05T11:59:59.000Z",
+        "deleted_at": null
+    }
+}
+```
+
+# Job相关(TBD)
+## 1. 创建Job
+## 2. 获取Job执行状态
+## 3. 删除Job
+## 4. 查询用户关联的Job列表
+
+
+# 其他
+## 类型定义
+1. IResponse定义:
+```typescript
+interface IResponse<T> {
+    code: number
+    data: T;
+    message?: string; 
+}
+```
+2. Task定义
+```ts
+interface Task {
+  id: string;                                       // task唯一uuid(v4)
+  user_id: string;                                  // task所属用户id
+  bq_id: string;                                    // task具体关联队列(bee-queue)中的id
+  task_type: 'ingest';                              // task类型，ingest->文档摄取
+  task_name: string;                                // task名, 规则`${task_type}-${Date.now()}`
+  task_status: 'created' | 'succeeded' | 'failed' | 'retrying';      
+                                                    // 任务状态
+  created_at: string;                               // 创建时间
+  updated_at: string;                               // 更新时间
+  deleted_at: string | null;                        // 删除时间，软删除
+}
+```
+
+2. Document定义
+```ts
+interface Document {
+  id: string;                // 文档唯一uuid(v4)
+  user_id: string;           // 文档所属用户id
+  object_key: string;        // 文档关联的对象存储的key, 使用`getObjectUrl(object_key)`可以生成对象存储的访问url
+  show_name: string;         // 文档的展示名称，上传时默认取`basename(file_path)`
+  index_name: string;        // 文档关联的向量集合名
+  task_id: string;           // 文档关联的task id(task用于处理用户上传文档，包括切片、embedding、存储等)
+  created_at: string;        // 创建时间
+  updated_at: string;        // 更新时间
+  deleted_at: string | null; // 删除时间，软删除
+  task: Task;                // 文档和task之间一对一关联关系
+}
+```

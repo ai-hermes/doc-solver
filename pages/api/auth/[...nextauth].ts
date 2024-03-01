@@ -18,6 +18,12 @@ export const authOptions = {
         GithubProvider({
             clientId: env.GITHUB_ID,
             clientSecret: env.GITHUB_SECRET,
+            // sometimes github provider is so slow and may occur timeout error
+            // increase timeout to avoid this error
+            // https://github.com/nextauthjs/next-auth/issues/3920
+            httpOptions: {
+                timeout: 5000,
+            }
         }),
         // ...add more providers here
     ],
@@ -39,7 +45,7 @@ export const authOptions = {
                 session.user.id = user.id;
             }
             return session;
-        },
+        }
     }
 }
 

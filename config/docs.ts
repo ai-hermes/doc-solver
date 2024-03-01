@@ -22,6 +22,16 @@ export const docsConfig: DocsConfig = {
             ],
         },
         {
+            title: "Misc",
+            items: [
+                {
+                    title: 'api文档',
+                    href: "/docs/misc/api",
+                }
+            ]
+        },
+        /*
+        {
             title: "Documentation",
             items: [
                 {
@@ -101,6 +111,7 @@ export const docsConfig: DocsConfig = {
                     disabled: true,
                 },
             ],
-        },
+        }
+        */
     ],
 }

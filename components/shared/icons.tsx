@@ -26,6 +26,9 @@ import {
     LucideIcon,
     ArrowLeftFromLine,
     ArrowRightFromLine,
+    BookOpen,
+    Database,
+    EyeOff,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -99,5 +102,8 @@ export const Icons = {
     user: User,
     warning: AlertTriangle,
     open: ArrowRightFromLine,
-    fold: ArrowLeftFromLine
+    fold: ArrowLeftFromLine,
+    book: BookOpen,
+    database: Database,
+    eyeOff: EyeOff,
 }

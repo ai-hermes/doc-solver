@@ -10,6 +10,5 @@ until nc -z $MYSQL_HOST $MYSQL_PORT; do
 done
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] - $MYSQL_HOST:$MYSQL_PORT is available."
-
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] - start next.js"
 node server.js

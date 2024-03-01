@@ -87,4 +87,20 @@ In general, keep an eye out in the `issues` and `discussions` section of this re
 
 ## Credit
 
-Frontend of this repo is inspired by [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+Frontend of this repo is inspired by 
+- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
+
+
+## Contributors ♥️
+
+<a href="https://github.com/ai-hermes/doc-solver/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ai-hermes/doc-solver&max=400&columns=20" />
+</a>
+
+## License
+
+Licensed under the MIT License, Copyright © 2021-present doc-solver

@@ -14,6 +14,7 @@ interface IngestQueueData {
     indexName: string;
     pdfUrl: string;
     pdfMd5Key: string;
+    taskId: string;
 }
 
 export class IngestQueue extends BaseQueue<IngestQueueData> {
@@ -40,76 +41,95 @@ export class IngestQueue extends BaseQueue<IngestQueueData> {
 
     public async handle(job: { id: string; data: IngestQueueData; }) {
         const {
-            data: { pdfMd5Key, source, indexName }
+            data: { pdfMd5Key, source, indexName, taskId }
         } = job;
         console.log(`Processing job ${job.id}`);
         console.log('job data', job.data)
 
-        console.log('start to get object')
-        const pdfLocalPath = `${this.pdfTmpDir}${pdfMd5Key}`;
-        const fileStream = fs.createWriteStream(pdfLocalPath);
-        await this.cosClient.getObject({
-            Bucket: env.QCLOUD_BUCKET,
-            Region: env.QCLOUD_REGION,
-            Key: pdfMd5Key,
-            Output: fileStream,
-        })
-        console.log('get object finished')
-
-
-        const loader = new PDFLoader(
-            pdfLocalPath,
-            {
-                metaData: {
-                    source: source,
-                    indexName: indexName,
-                }
-            }
-        );
-        const docs = await loader.load();
-        const { chunks } = loader.getChunkAndLines();
-
-        console.log('start to write db')
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        const promises: Array<Promise<any>> = []
-        chunks.forEach((chunk) => {
-            const p = this.prisma.chunk.create({
-                data: {
-                    id: chunk.id || '',
-                    content: chunk.str,
-                    attribute: chunk.attribute || {},
-                }
+        try {
+            console.log('start to get object')
+            const pdfLocalPath = `${this.pdfTmpDir}${pdfMd5Key}`;
+            const fileStream = fs.createWriteStream(pdfLocalPath);
+            await this.cosClient.getObject({
+                Bucket: env.QCLOUD_BUCKET,
+                Region: env.QCLOUD_REGION,
+                Key: pdfMd5Key,
+                Output: fileStream,
             })
-            promises.push(p)
+            console.log('get object finished')
 
-            chunk.lines.forEach(l => {
-                const p = this.prisma.chunkLine.create({
+
+            const loader = new PDFLoader(
+                pdfLocalPath,
+                {
+                    metaData: {
+                        source: source,
+                        indexName: indexName,
+                    }
+                }
+            );
+            const docs = await loader.load();
+            const { chunks } = loader.getChunkAndLines();
+
+            console.log('start to write db')
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            const promises: Array<Promise<any>> = []
+            chunks.forEach((chunk) => {
+                const p = this.prisma.chunk.create({
                     data: {
-                        id: l.id || '',
-                        content: l.str,
-                        chunk_id: chunk.id || '',
-                        rect_info: l.rect,
-                        origin_info: l,
-                        attribute: l.attribute || {},
+                        id: chunk.id || '',
+                        content: chunk.str,
+                        attribute: chunk.attribute || {},
                     }
                 })
-
                 promises.push(p)
+
+                chunk.lines.forEach(l => {
+                    const p = this.prisma.chunkLine.create({
+                        data: {
+                            id: l.id || '',
+                            content: l.str,
+                            chunk_id: chunk.id || '',
+                            rect_info: l.rect,
+                            origin_info: l,
+                            attribute: l.attribute || {},
+                        }
+                    })
+
+                    promises.push(p)
+                })
             })
-        })
-        await Promise.all(promises)
-        console.log('write db finished')
+            await Promise.all(promises)
+            console.log('write db finished')
 
-        console.log('start to write vector store')
-        const embeddings = getOpenAIEmbeddings();
-        await WeaviateStore.fromDocuments(docs, embeddings, {
-            client: getWeaviateClient(),
-            indexName: indexName,
-            textKey: 'text',
-        })
-        console.log('write vector finished')
+            console.log('start to write vector store')
+            const embeddings = getOpenAIEmbeddings();
+            await WeaviateStore.fromDocuments(docs, embeddings, {
+                client: getWeaviateClient(),
+                indexName: indexName,
+                textKey: 'text',
+            })
+            console.log('write vector finished')
 
-        console.log('job finished')
-        return
+            console.log('job finished')
+            await this.prisma.task.update({
+                where: {
+                    id: taskId
+                },
+                data: {
+                    task_status: 'successed',
+                }
+            })
+        } catch (e) {
+            console.log('job failed', e)
+            await this.prisma.task.update({
+                where: {
+                    id: taskId
+                },
+                data: {
+                    task_status: 'failed',
+                }
+            })
+        }
     }
 }
