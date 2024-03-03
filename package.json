@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "https://github.com/ai-hermes",
   "scripts": {
-    "dev": "cp .env.dev .env.local && next dev -p 4000",
+    "dev": "cp .env.dev .env.local && next dev",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --noEmit",
