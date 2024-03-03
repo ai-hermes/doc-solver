@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod"
-
+import { Document } from '@/types/document'
 // Document type should follow the schema from the database
 export const documentSchema = z.object({
     id: z.string(),

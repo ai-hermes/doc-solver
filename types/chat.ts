@@ -4,7 +4,7 @@ export type Message = {
     type: 'apiMessage' | 'userMessage';
     message: string;
     isStreaming?: boolean;
-    sourceDocs?: (Document | {
+    sourceDocs?: (Document & {
         highlight: Highlight[]
     })[];
 };

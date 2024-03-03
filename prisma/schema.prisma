@@ -35,13 +35,13 @@ model ChunkLine {
 model Task {
   id          String    @id @db.VarChar(36)
   user_id     String
-  bq_id       String    @unique
   task_type   String
   task_name   String
   task_status String
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime  @default(now()) @db.Timestamp(0)
   deleted_at  DateTime? @db.Timestamp(0)
+  bq_id       String    @unique
   Document    Document?
 
   @@map("tasks")
@@ -51,12 +51,12 @@ model Document {
   id         String    @id @db.VarChar(36)
   user_id    String
   object_key String
-  show_name  String
   index_name String
   task_id    String    @unique
   created_at DateTime  @default(now()) @db.Timestamp(0)
   updated_at DateTime  @default(now()) @db.Timestamp(0)
   deleted_at DateTime? @db.Timestamp(0)
+  show_name  String
   task       Task      @relation(fields: [task_id], references: [id])
 
   @@map("documents")
@@ -85,10 +85,10 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "accounts_userId_fkey")
   @@map("accounts")
 }
 
@@ -99,6 +99,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId], map: "sessions_userId_fkey")
   @@map("sessions")
 }
 

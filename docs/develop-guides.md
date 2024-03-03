@@ -60,3 +60,15 @@
 
 but you cannot search anything now, because we haven't ingested any data into the vector store yet.
 4. ingest data into vector store: `npm run ingest`. After the execution, you can visit doc-solver on your favourite browser by `http://localhost:3000`, and search something, it will look like this:
+
+
+# System Design
+1. Job Schedule
+we use beequeue which use redis as backend as our job schedule, it will look like this:
+![job-schedule](images/job-schedule.png)
+
+we alreay register ingest task, and we will support more tasks in the future.
+
+2. RAG
+when user input a question, the rag system will take following steps to answer user, it will look like this:
+![rag](images/arch-rag.png)

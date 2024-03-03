@@ -61,7 +61,7 @@ jobs:
           cos_region: ${{ secrets.COS_REGION }}
           local_path: .next/static
           remote_path: doc-solver/_next/static
-          clean: true
+          clean: false
   
   build-web-image:
     needs: build-next
