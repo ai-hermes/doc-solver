@@ -9,14 +9,12 @@ import {
     File,
     FileText,
     HelpCircle,
-    Image,
     Laptop,
     Loader2,
     LucideProps,
     Moon,
     MoreVertical,
     Plus,
-    Puzzle,
     Search,
     Settings,
     SunMedium,
@@ -30,6 +28,7 @@ import {
     Database,
     EyeOff,
 } from "lucide-react"
+import Image from 'next/image';
 
 export type Icon = LucideIcon
 
@@ -75,7 +74,14 @@ export const Icons = {
     ),
     help: HelpCircle,
     laptop: Laptop,
-    logo: Puzzle,
+    logo: ({...props}) => (
+        <Image 
+            alt="" 
+            src='/logo.svg' 
+            width={props.width ?? 28} 
+            height={props.height ?? 28}
+        />
+    ),
     media: Image,
     moon: Moon,
     page: File,
@@ -106,4 +112,5 @@ export const Icons = {
     book: BookOpen,
     database: Database,
     eyeOff: EyeOff,
+    pdf: FileText
 }

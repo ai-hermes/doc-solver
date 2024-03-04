@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import ContentHeader from '@/components/header/content-header'
+import ContentHeader from '@/components/header/content-header';
+import DocumentList from '../document-list';
 interface LayoutProps {
     children: React.ReactNode;
     rightElements?: React.ReactNode
@@ -16,10 +17,7 @@ export default function ContentLayout({
             <ContentHeader rightElements={rightElements} />
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel defaultSize={15}>
-                    <div className='overflow-hidden p-3'>
-                        {/* pdf file list */}
-                        <div className='text-lg font-semibold'>Title</div>
-                    </div>
+                    <DocumentList/>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel>
