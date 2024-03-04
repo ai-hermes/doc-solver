@@ -22,7 +22,7 @@ export const authOptions = {
             // increase timeout to avoid this error
             // https://github.com/nextauthjs/next-auth/issues/3920
             httpOptions: {
-                timeout: 5000,
+                timeout: 10000,
             }
         }),
         // ...add more providers here

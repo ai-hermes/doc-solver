@@ -190,7 +190,7 @@ class App extends Component<Props, State> {
             }),
         });
     }
-
+    
     render() {
         const { url } = this.state;
         const { highlights } = this.props;

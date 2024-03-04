@@ -49,43 +49,43 @@ services:
     networks:
       - doc-solver
 
-  web:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
-    cap_add:
-     - SYS_PTRACE
-    security_opt:
-     - "seccomp:unconfined"
-    ports:
-     - "3000:3000"
-    environment:
-      - TZ=Asia/Shanghai
-    volumes:
-      - .env:/app/.env
-    depends_on:
-      - mysql
-    networks:
-      - doc-solver
+  # web:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: runner
+  #   entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+  #   cap_add:
+  #    - SYS_PTRACE
+  #   security_opt:
+  #    - "seccomp:unconfined"
+  #   ports:
+  #    - "3000:3000"
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #   volumes:
+  #     - .env:/app/.env
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - doc-solver
 
-  worker:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
-    environment:
-      - TZ=Asia/Shanghai
-    volumes:
-      - .env:/app/.env
-    depends_on:
-      - mysql
-      - redis
-      - weaviate
-    networks:
-      - doc-solver
+  # worker:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: runner
+  #   entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #   volumes:
+  #     - .env:/app/.env
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #     - weaviate
+  #   networks:
+  #     - doc-solver
 
 networks:
   doc-solver:
