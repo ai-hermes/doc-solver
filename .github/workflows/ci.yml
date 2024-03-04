@@ -62,6 +62,16 @@ jobs:
           local_path: .next/static
           remote_path: doc-solver/_next/static
           clean: false
+      - name: Upload public to cos
+        uses: TencentCloud/cos-action@v1
+        with:
+          secret_id: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
+          secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
+          cos_bucket: ${{ secrets.COS_BUCKET }}
+          cos_region: ${{ secrets.COS_REGION }}
+          local_path: public
+          remote_path: doc-solver/_next/public
+          clean: false
   
   build-web-image:
     needs: build-next
