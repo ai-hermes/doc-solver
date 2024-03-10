@@ -46,7 +46,7 @@ export default function Embedding() {
         key: '',
         jobId: '',
     });
-
+    
     usePollingEffect(
         async () => {
             if (!uploadInfo.key || !uploadInfo.url || !uploadInfo.jobId || uploadInfo.jobStatus === 'succeeded') {
@@ -191,7 +191,7 @@ export default function Embedding() {
                                     .then(res => res.json())
                                     .then(data => {
                                         console.log('embedding data', data)
-                                        // {code, data: {jobId: '9'}, status: 'created'}
+                                        // {code, data: {jobId: '9'}, message: 'create job success'}
                                         setUploadInfo({
                                             ...uploadInfo,
                                             jobId: data?.data?.jobId,
