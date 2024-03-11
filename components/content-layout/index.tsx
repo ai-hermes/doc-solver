@@ -1,7 +1,9 @@
 import React from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import ContentHeader from '@/components/header/content-header';
-import DocumentList from '../document-list';
+import { ContentHeader } from '@/components/header/content-header';
+import { DocumentList } from '../document-list';
+import { ToUploadButton } from '../to-upload-button';
+
 interface LayoutProps {
     children: React.ReactNode;
     rightElements?: React.ReactNode
@@ -17,6 +19,7 @@ export default function ContentLayout({
             <ContentHeader rightElements={rightElements} />
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel defaultSize={15}>
+                    <ToUploadButton />
                     <DocumentList/>
                 </ResizablePanel>
                 <ResizableHandle withHandle />

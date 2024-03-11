@@ -56,7 +56,7 @@ const HighlightPopup = ({
         </div>
     ) : null;
 
-const PRIMARY_PDF_URL = "https://savemoney.spotty.com.cn/poems/raft.pdf";
+const PRIMARY_PDF_URL = "https://static.spotty.com.cn/pdf/17e362e7e5ba6ffb6248c4a2e923e63e";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 const initialUrl = PRIMARY_PDF_URL;

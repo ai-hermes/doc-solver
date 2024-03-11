@@ -4,7 +4,7 @@ export function usePollingEffect(
     asyncCallback: () => Promise<void>,
     dependencies: unknown[] = [],
     {
-        interval = 1_000,
+        interval = 1000,
         onCleanUp = () => { }
     } = {},
 ) {

@@ -1,11 +1,11 @@
 import { useDocumentList } from '@/hooks/use-document';
-import DocumentItem from '../document-item';
+import { DocumentItem } from '../document-item';
 
 interface DocumentListProps {
     
 }
 
-export default function DocumentList({}: DocumentListProps) {
+export function DocumentList({}: DocumentListProps) {
     const { documents } = useDocumentList()
 
     return (

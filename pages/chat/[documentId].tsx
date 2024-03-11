@@ -28,13 +28,13 @@ import { Typewriter } from '@/utils/typewriter';
 import { useBrowserLanguage } from '@/hooks/use-browser-language';
 import { InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-import {
-    Select, SelectContent, SelectGroup, SelectItem,
-    // SelectLabel, 
-    SelectTrigger, SelectValue
-} from '@/components/ui/select';
+// import {
+//     Select, SelectContent, SelectGroup, SelectItem,
+//     // SelectLabel, 
+//     SelectTrigger, SelectValue
+// } from '@/components/ui/select';
 // import { values } from 'lodash';
-import { useDocumentDetail, useDocumentList } from '@/hooks/use-document';
+import { useDocumentDetail } from '@/hooks/use-document';
 import { getObjectUrl } from '@/lib/cos';
 import { useChatHistory } from '@/hooks/use-chat-history';
 
@@ -63,7 +63,6 @@ export default function Home({
     });
     const router = useRouter()
     const documentId = router.query.documentId as string
-    const { documents } = useDocumentList()
     const { document } = useDocumentDetail(documentId)
     const { messages: chatHistory } = useChatHistory(documentId)
     useEffect(() => {
@@ -303,7 +302,7 @@ export default function Home({
     return (
         <ContentLayout>
             <div className="w-full mx-auto flex flex-col gap-4">
-                <Select onValueChange={(v) => {
+                {/* <Select onValueChange={(v) => {
                     console.log('value', v)
                     router.push(`/chat/${v}`)
                 }}>
@@ -322,8 +321,7 @@ export default function Home({
                             </SelectGroup>
                         </SelectContent>
                     }
-
-                </Select>
+                </Select> */}
                 <div className="grid grid-cols-8 gap-2 ">
                     <div className='col-span-4 '>
                         {
@@ -331,11 +329,11 @@ export default function Home({
                             <PdfComponent url={getObjectUrl(document?.object_key)} />
                         }
                     </div>
-                    <div className='col-span-4 overflow-hidden'>
-                        <h1 className="text-2xl font-bold leading-[1.1] text-center">
+                    <div className='col-span-4'>
+                        <h1 className="text-2xl font-bold leading-[1.1] text-center pt-3">
                             Chat With Your Docs
                         </h1>
-                        <main className={cn(styles.main, 'py-10 px-8')}>
+                        <main className={cn(styles.main, 'py-3 pr-3')}>
                             <div className={cn(styles.cloud, 'w-full')}>
                                 <div ref={messageListRef} className={styles.messagelist}>
                                     {messages.map((message, index) => {

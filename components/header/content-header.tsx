@@ -13,7 +13,7 @@ interface LayoutProps {
     scroll?: boolean;
 }
 
-export default function ContentHeader({
+export function ContentHeader({
     rightElements,
     scroll = false
 }: LayoutProps) {

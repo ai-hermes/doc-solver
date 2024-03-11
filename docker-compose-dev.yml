@@ -70,22 +70,22 @@ services:
   #   networks:
   #     - doc-solver
 
-  # worker:
-  #   build: 
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     target: runner
-  #   entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
-  #   environment:
-  #     - TZ=Asia/Shanghai
-  #   volumes:
-  #     - .env:/app/.env
-  #   depends_on:
-  #     - mysql
-  #     - redis
-  #     - weaviate
-  #   networks:
-  #     - doc-solver
+  worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - .env.prod:/app/.env
+    depends_on:
+      - mysql
+      - redis
+      - weaviate
+    networks:
+      - doc-solver
 
 networks:
   doc-solver:

@@ -27,11 +27,10 @@ import {
     BookOpen,
     Database,
     EyeOff,
+    PlusCircle,
 } from "lucide-react"
 import Image from 'next/image';
-
 export type Icon = LucideIcon
-
 export const Icons = {
     add: Plus,
     arrowRight: ArrowRight,
@@ -112,5 +111,6 @@ export const Icons = {
     book: BookOpen,
     database: Database,
     eyeOff: EyeOff,
-    pdf: FileText
+    pdf: FileText,
+    upload: PlusCircle
 }
