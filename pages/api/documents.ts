@@ -27,11 +27,13 @@ async function deleteDocuments(documentIds: string[]) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const [user, isLogin] = await checkLogin(req, res)
+    let userId = '';
     if (!isLogin) {
-        res.status(401).send('Unauthorized')
-        return
+        userId = '0000000000000000000000000'
+    } else {
+        userId = user!.id;
     }
-    const userId = user!.id;
+    console.log('userId', userId)
     try {
         switch (req.method) {
             case 'GET': {
@@ -42,6 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 })
             }
             case 'DELETE': {
+                if (!isLogin) {
+                    res.status(401).send('Unauthorized')
+                    return
+                }
                 const documentIds = req.body.ids as string[];
                 if (!documentIds || documentIds.length === 0) {
                     res.status(200).json({
