@@ -17,7 +17,7 @@ export default function ContentLayout({
     return (
         <>
             <ContentHeader rightElements={rightElements} />
-            <ResizablePanelGroup direction="horizontal">
+            <ResizablePanelGroup direction="horizontal" style={{height: `calc(100vh - 4.2rem)`}}>
                 <ResizablePanel defaultSize={15}>
                     <ToUploadButton />
                     <DocumentList/>
