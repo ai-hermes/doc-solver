@@ -13,8 +13,8 @@ import { Stepper,StepperItem } from "@/components/ui/stepper";
 import { useToast } from "@/components/ui/use-toast";
 
 const steps = [
-    { id: 1, label: "Step 1: Select pdf file" },
-    { id: 2, label: "Step 2: Generate sts token" },
+    { id: 1, label: "Step 1: Select pdf file (.pdf, .txt, or .doc suffixes only)" },
+    { id: 2, label: "Step 2: Upload the file" },
     { id: 3, label: "Step 3: Embedding" },
     { id: 4, label: "Ending" },
   ]
@@ -166,7 +166,7 @@ export default function Embedding() {
                                 // console.log(JSON.stringify(z))
                             }}
                         >
-                            generate sts token
+                            upload
                         </Button>
                     </div>
                 </StepperItem>
