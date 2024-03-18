@@ -7,6 +7,7 @@ import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
 import useScroll from "@/hooks/use-scroll";
 import { useSession } from "next-auth/react";
+import styles from './content-header.module.css';
 
 interface LayoutProps {
     rightElements?: React.ReactNode
@@ -28,7 +29,7 @@ export function ContentHeader({
                 : "bg-background/0"
                 : "border-b"}`}
         >
-            <div className="container flex h-16 items-center justify-between py-4">
+            <div className={`container flex h-16 items-center justify-between py-4 ${styles.container}`}>
                 <Link href="/dashboard/dataset" className="hidden items-center space-x-2 md:flex">
                     <Icons.logo />
                     <span className="hidden font-urban text-xl font-bold sm:inline-block">

@@ -5,12 +5,19 @@ import COS from 'cos-js-sdk-v5';
 import type { CredentialData } from 'qcloud-cos-sts';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Nullable } from '@/typings';
 import { calculateMD5Async, readFileAsync } from '@/lib/fsUtils';
 import { getObjectUrl } from '@/lib/cos';
 import { useToast } from "@/components/ui/use-toast";
+import { Stepper,StepperItem } from "@/components/ui/stepper";
+
+const steps = [
+    { id: 1, label: "Step 1: Upload pdf file" },
+    { id: 2, label: "Step 2: Generate sts token" },
+    { id: 3, label: "Step 3: Embedding" },
+    { id: 4, label: "Ending" },
+  ]
 
 const cos = new COS({
     getAuthorization: function (_, callback) {
@@ -31,6 +38,7 @@ const cos = new COS({
 })
 // cos.putBucket()
 export default function Embedding() {
+
     const {toast} = useToast();
     const [selectedFile, setSelectedFile] = useState<Nullable<File>>();
 
@@ -69,15 +77,9 @@ export default function Embedding() {
 
     return (
         <div className="container mx-auto mt-8">
-            <div className='flex flex-col'>
-                <Card className='mb-10'>
-                    <CardHeader>
-                        <CardTitle>Upload pdf file</CardTitle>
-                        <CardDescription>upload file for embedding</CardDescription>
-                    </CardHeader>
-                    <CardContent
-                        className='flex flex-row'
-                    >
+            <Stepper initialStep={0} steps={steps} orientation="vertical">
+                <StepperItem>
+                    <div className="rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
                         <Input
                             id="picture"
                             type="file"
@@ -87,138 +89,140 @@ export default function Embedding() {
                                     setSelectedFile(e.target.files[0])
                                 }
                             }}
+                            accept='.pdf,.doc,.txt'
                         />
-                        <Button
-                            onClick={async () => {
-                                console.log('selectedFile', selectedFile)
-                                if (!selectedFile) return
-                                const buffer = await readFileAsync(selectedFile)
-                                if (!buffer) return
-                                console.log(process.env.NEXT_PUBLIC_QCLOUD_BUCKET)
-                                console.log(selectedFile.name)
+                    </div>
+                </StepperItem>
+                <StepperItem>
+                    <div className="text-left rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
+                <Button
+                        onClick={async () => {
+                            console.log('selectedFile', selectedFile)
+                            if (!selectedFile) return
+                            const buffer = await readFileAsync(selectedFile)
+                            if (!buffer) return
+                            console.log(process.env.NEXT_PUBLIC_QCLOUD_BUCKET)
+                            console.log(selectedFile.name)
 
-                                const md5 = await calculateMD5Async(buffer)
-                                console.log('md5', md5)
+                            const md5 = await calculateMD5Async(buffer)
+                            console.log('md5', md5)
 
-                                const uploadFileResp = await cos.uploadFile({
-                                    Bucket: process.env.NEXT_PUBLIC_QCLOUD_BUCKET,
-                                    Region: process.env.NEXT_PUBLIC_QCLOUD_REGION,
-                                    Key: `pdf/${md5}`,
-                                    Body: selectedFile,
-                                    SliceSize: 1024 * 1024 * 2,
-                                    onTaskReady: function (taskId) {
-                                        console.log('onTaskReady', taskId);
-                                    },
-                                    onProgress: function (progressData) {
-                                        console.log('onProgress', JSON.stringify(progressData));
-                                    },
-                                    onFileFinish: function (err, data, options) {
-                                        console.log(options.Key + '上传' + (err ? '失败' : '完成'), data);
-                                        setUploadInfo({
-                                            ...uploadInfo,
-                                            url: getObjectUrl(`pdf/${md5}`),
-                                            key: `pdf/${md5}`,
-                                        })
-                                        if (err) {
-                                            toast({
-                                                variant: 'destructive',
-                                                description: err.message,
-                                            })
-                                        } else {
-                                            toast({
-                                                description: 'success',
-                                            })
-                                        }
-                                    },
-                                }, function(err) {
-                                    if(err) {
+                            const uploadFileResp = await cos.uploadFile({
+                                Bucket: process.env.NEXT_PUBLIC_QCLOUD_BUCKET,
+                                Region: process.env.NEXT_PUBLIC_QCLOUD_REGION,
+                                Key: `pdf/${md5}`,
+                                Body: selectedFile,
+                                SliceSize: 1024 * 1024 * 2,
+                                onTaskReady: function (taskId) {
+                                    console.log('onTaskReady', taskId);
+                                },
+                                onProgress: function (progressData) {
+                                    console.log('onProgress', JSON.stringify(progressData));
+                                },
+                                onFileFinish: function (err, data, options) {
+                                    console.log(options.Key + '上传' + (err ? '失败' : '完成'), data);
+                                    setUploadInfo({
+                                        ...uploadInfo,
+                                        url: getObjectUrl(`pdf/${md5}`),
+                                        key: `pdf/${md5}`,
+                                    })
+                                    if (err) {
                                         toast({
                                             variant: 'destructive',
                                             description: err.message,
                                         })
-                                    }
-                                }
-                              )
-                                // uploadFileResp.statusCode === 200 上传成功
-                                // uploadFileResp.Location 访问的url
-                                // key在前端自动生成
-                                console.log('uploadFileResp', uploadFileResp)
-                                // setSelectedFile(null)
-                                // cos.putObject({})
-                                // const z = await cos.getBucket({
-                                //     Bucket: 'doc-solver-dev-1251009550', /* 填入您自己的存储桶，必须字段 */
-                                //     Region: 'ap-shanghai',  /* 存储桶所在地域，例如ap-beijing，必须字段 */
-                                //     Prefix: '_next/static',           /* Prefix表示列出的object的key以prefix开始，非必须 */
-                                // })
-                                /*
-                                function(err, data) {
-                                    console.log(err || data.Contents);
-                                })
-                                */
-                                // console.log(JSON.stringify(z))
-                            }}
-                        >
-                            generate sts token
-                        </Button>
-                    </CardContent>
-                </Card>
-                <Card className='mb-10'>
-                    <CardHeader>
-                        <CardTitle>Embedding</CardTitle>
-                        <CardDescription>split chunks and embed the upload file</CardDescription>
-                    </CardHeader>
-                    <CardContent
-                        className='flex flex-row'
-                    >
-                        <Button
-                            onClick={() => {
-                                console.log('uploadInfo', uploadInfo)
-                                console.log('selectedFile', selectedFile)
-                                if (!selectedFile) return
-                                // return
-                                fetch('/api/job', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        // jobId: uploadInfo.jobId
-                                        source: selectedFile.name,
-                                        pdfUrl: uploadInfo.url,
-                                        pdfMd5Key: uploadInfo.key
-                                    })
-                                })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        console.log('embedding data', data)
-                                        // {code, data: {jobId: '9'}, message: 'create job success'}
-                                        setUploadInfo({
-                                            ...uploadInfo,
-                                            jobId: data?.data?.jobId,
+                                    } else {
+                                        toast({
+                                            description: 'success',
                                         })
-                                        if(data.code === 200) {
-                                            toast({
-                                                description: data.message,
-                                            })
-                                        } else {
-                                            toast({
-                                                variant: 'destructive',
-                                                description: data.message,
-                                            })
-                                        }
+                                    }
+                                },
+                            }, function(err) {
+                                if(err) {
+                                    toast({
+                                        variant: 'destructive',
+                                        description: err.message,
                                     })
-                            }}
-                        >
-                            {
-                                !uploadInfo.jobStatus ?
-                                    '开始embedding' :
-                                    uploadInfo.jobStatus === 'created' ? 'embedding中' :
-                                        uploadInfo.jobStatus === 'succeeded' ? 'embedding成功' : '默认状态'
+                                }
                             }
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
+                            )
+                            // uploadFileResp.statusCode === 200 上传成功
+                            // uploadFileResp.Location 访问的url
+                            // key在前端自动生成
+                            console.log('uploadFileResp', uploadFileResp)
+                            // setSelectedFile(null)
+                            // cos.putObject({})
+                            // const z = await cos.getBucket({
+                            //     Bucket: 'doc-solver-dev-1251009550', /* 填入您自己的存储桶，必须字段 */
+                            //     Region: 'ap-shanghai',  /* 存储桶所在地域，例如ap-beijing，必须字段 */
+                            //     Prefix: '_next/static',           /* Prefix表示列出的object的key以prefix开始，非必须 */
+                            // })
+                            /*
+                            function(err, data) {
+                                console.log(err || data.Contents);
+                            })
+                            */
+                            // console.log(JSON.stringify(z))
+                        }}
+                    >
+                        generate sts token
+                    </Button>
+                    </div>
+                </StepperItem>
+                <StepperItem>
+                <div className="text-left rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
+                    
+                <Button
+                    onClick={() => {
+                        console.log('uploadInfo', uploadInfo)
+                        console.log('selectedFile', selectedFile)
+                        if (!selectedFile) return
+                        // return
+                        fetch('/api/job', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                // jobId: uploadInfo.jobId
+                                source: selectedFile.name,
+                                pdfUrl: uploadInfo.url,
+                                pdfMd5Key: uploadInfo.key
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log('embedding data', data)
+                                // {code, data: {jobId: '9'}, message: 'create job success'}
+                                setUploadInfo({
+                                    ...uploadInfo,
+                                    jobId: data?.data?.jobId,
+                                })
+                                if(data.code === 200) {
+                                    toast({
+                                        description: data.message,
+                                    })
+                                } else {
+                                    toast({
+                                        variant: 'destructive',
+                                        description: data.message,
+                                    })
+                                }
+                            })
+                    }}
+                >
+                    {
+                        !uploadInfo.jobStatus ?
+                            '开始embedding' :
+                            uploadInfo.jobStatus === 'created' ? 'embedding中' :
+                                uploadInfo.jobStatus === 'succeeded' ? 'embedding成功' : '默认状态'
+                    }
+                </Button>
+                        </div>
+                </StepperItem>
+                <StepperItem>
+                </StepperItem>
+            </Stepper>
         </div>
     )
 }
