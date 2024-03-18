@@ -1,3 +1,7 @@
+/**
+ * not shadcn-ui's official comp
+ * copy form https://github.com/shadcn-ui/ui/pull/318/files#diff-363db0985f3617fc0863ca85793dada90477b817e681a66020a7b50b97aa4358
+ */
 import { Button } from "@/components/ui/button"
 import {
   useStepper,

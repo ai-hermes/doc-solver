@@ -29,7 +29,7 @@ export function ContentHeader({
                 : "bg-background/0"
                 : "border-b"}`}
         >
-            <div className={`container flex h-16 items-center justify-between py-4 ${styles.container}`}>
+            <div className={cn('container flex h-16 items-center justify-between py-4',styles.container)}>
                 <Link href="/dashboard/dataset" className="hidden items-center space-x-2 md:flex">
                     <Icons.logo />
                     <span className="hidden font-urban text-xl font-bold sm:inline-block">

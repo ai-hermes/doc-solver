@@ -3,6 +3,7 @@ import moment from 'moment-timezone';
 import { Document } from '@/types/document';
 import { useRouter } from "next/router";
 import styles from './index.module.css';
+import { cn } from "@/lib/utils"
 
 type DocumentItemProps = Document;
 
@@ -14,7 +15,10 @@ export function DocumentItem({...props}: DocumentItemProps) {
     return (
         <div 
             key={id} 
-            className={`${documentId === id && 'bg-slate-100'} overflow-hidden p-3 border-t hover:bg-slate-100`} 
+            className={cn(
+                'overflow-hidden p-3 border-t hover:bg-slate-100', 
+                documentId === id && 'bg-slate-100'
+            )} 
             onClick={() => router.push(`/chat/${id}`)}
         >
             <div className={`flex items-center text-base font-semibold`}>

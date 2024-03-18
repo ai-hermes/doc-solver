@@ -1,3 +1,7 @@
+/**
+ * not shadcn-ui's official comp
+ * copy form https://github.com/shadcn-ui/ui/pull/318/files#diff-60f7451d125a1506e2b2d2433ec86bf1368a21bc673999d7664be5dfe7bc5d04
+ */
 import React from "react"
 import { cva } from "class-variance-authority"
 import { Check, Loader2, X } from "lucide-react"

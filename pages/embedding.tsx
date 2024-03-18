@@ -13,7 +13,7 @@ import { Stepper,StepperItem } from "@/components/ui/stepper";
 import { useToast } from "@/components/ui/use-toast";
 
 const steps = [
-    { id: 1, label: "Step 1: Upload pdf file" },
+    { id: 1, label: "Step 1: Select pdf file" },
     { id: 2, label: "Step 2: Generate sts token" },
     { id: 3, label: "Step 3: Embedding" },
     { id: 4, label: "Ending" },
