@@ -5,12 +5,19 @@ import COS from 'cos-js-sdk-v5';
 import type { CredentialData } from 'qcloud-cos-sts';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Nullable } from '@/typings';
 import { calculateMD5Async, readFileAsync } from '@/lib/fsUtils';
 import { getObjectUrl } from '@/lib/cos';
+import { Stepper,StepperItem } from "@/components/ui/stepper";
 import { useToast } from "@/components/ui/use-toast";
+
+const steps = [
+    { id: 1, label: "Step 1: Select pdf file (.pdf, .txt, or .doc suffixes only)" },
+    { id: 2, label: "Step 2: Upload the file" },
+    { id: 3, label: "Step 3: Embedding" },
+    { id: 4, label: "Ending" },
+  ]
 
 const cos = new COS({
     getAuthorization: function (_, callback) {
@@ -31,7 +38,7 @@ const cos = new COS({
 })
 // cos.putBucket()
 export default function Embedding() {
-    const {toast} = useToast();
+    const { toast } = useToast();
     const [selectedFile, setSelectedFile] = useState<Nullable<File>>();
 
     const [uploadInfo, setUploadInfo] = useState<{
@@ -69,15 +76,9 @@ export default function Embedding() {
 
     return (
         <div className="container mx-auto mt-8">
-            <div className='flex flex-col'>
-                <Card className='mb-10'>
-                    <CardHeader>
-                        <CardTitle>Upload pdf file</CardTitle>
-                        <CardDescription>upload file for embedding</CardDescription>
-                    </CardHeader>
-                    <CardContent
-                        className='flex flex-row'
-                    >
+            <Stepper initialStep={0} steps={steps} orientation="vertical">
+                <StepperItem>
+                    <div className="rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
                         <Input
                             id="picture"
                             type="file"
@@ -87,8 +88,15 @@ export default function Embedding() {
                                     setSelectedFile(e.target.files[0])
                                 }
                             }}
+                            accept='.pdf,.doc,.txt'
                         />
+                    </div>
+                </StepperItem>
+
+                <StepperItem>
+                    <div className="text-left rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
                         <Button
+                            disabled={!selectedFile}
                             onClick={async () => {
                                 console.log('selectedFile', selectedFile)
                                 if (!selectedFile) return
@@ -138,7 +146,7 @@ export default function Embedding() {
                                         })
                                     }
                                 }
-                              )
+                                )
                                 // uploadFileResp.statusCode === 200 上传成功
                                 // uploadFileResp.Location 访问的url
                                 // key在前端自动生成
@@ -158,19 +166,15 @@ export default function Embedding() {
                                 // console.log(JSON.stringify(z))
                             }}
                         >
-                            generate sts token
+                            upload
                         </Button>
-                    </CardContent>
-                </Card>
-                <Card className='mb-10'>
-                    <CardHeader>
-                        <CardTitle>Embedding</CardTitle>
-                        <CardDescription>split chunks and embed the upload file</CardDescription>
-                    </CardHeader>
-                    <CardContent
-                        className='flex flex-row'
-                    >
+                    </div>
+                </StepperItem>
+
+                <StepperItem>
+                    <div className="text-left rounded-lg bg-slate-100 p-4 text-slate-900 dark:bg-slate-300">
                         <Button
+                            disabled={!selectedFile || !uploadInfo.key}
                             onClick={() => {
                                 console.log('uploadInfo', uploadInfo)
                                 console.log('selectedFile', selectedFile)
@@ -216,9 +220,12 @@ export default function Embedding() {
                                         uploadInfo.jobStatus === 'succeeded' ? 'embedding成功' : '默认状态'
                             }
                         </Button>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                </StepperItem>
+
+                <StepperItem />
+                
+            </Stepper>
         </div>
     )
 }

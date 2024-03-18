@@ -28,12 +28,6 @@ import { Typewriter } from '@/utils/typewriter';
 import { useBrowserLanguage } from '@/hooks/use-browser-language';
 import { InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-// import {
-//     Select, SelectContent, SelectGroup, SelectItem,
-//     // SelectLabel, 
-//     SelectTrigger, SelectValue
-// } from '@/components/ui/select';
-// import { values } from 'lodash';
 import { useDocumentDetail } from '@/hooks/use-document';
 import { getObjectUrl } from '@/lib/cos';
 import { useChatHistory } from '@/hooks/use-chat-history';
@@ -302,26 +296,6 @@ export default function Home({
     return (
         <ContentLayout>
             <div className="w-full mx-auto flex flex-col gap-4">
-                {/* <Select onValueChange={(v) => {
-                    console.log('value', v)
-                    router.push(`/chat/${v}`)
-                }}>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select your document" />
-                    </SelectTrigger>
-                    {
-                        documents.length > 0 &&
-                        <SelectContent>
-                            <SelectGroup>
-                                {
-                                    documents.map(item =>
-                                        <SelectItem key={item.id} value={item.id}>{item.show_name}</SelectItem>
-                                    )
-                                }
-                            </SelectGroup>
-                        </SelectContent>
-                    }
-                </Select> */}
                 <div className="grid grid-cols-8 gap-2 ">
                     <div className='col-span-4 '>
                         {
