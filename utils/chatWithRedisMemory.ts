@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { QA_TEMPLATE, CONDENSE_TEMPLATE } from "./makechain";
 import { serializeChatHistory } from "./llm";
 import { Nullable } from "@/typings";
+import { generateRedisUrl } from "./redis-client";
 
 
 interface PromptContextData {
@@ -49,7 +50,7 @@ export class ChatWithRedisMemory {
             chatHistory: new RedisChatMessageHistory({
                 sessionId: this.chatId, // Or some other unique identifier for the conversation
                 sessionTTL: 43200, // 1 month 30 * 24 * 60, omit this parameter to make sessions never expire
-                url: 'redis://:docsolver123456@192.168.10.6:6379/0', // Default value, override with your own instance's URL
+                url: generateRedisUrl(), // Default value, override with your own instance's URL
             })
         });
 
