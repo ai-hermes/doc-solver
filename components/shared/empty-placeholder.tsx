@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/shared/icons"
+import { LucideIcon } from "lucide-react";
 
 interface EmptyPlaceholderProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -35,7 +36,7 @@ EmptyPlaceholder.Icon = function EmptyPlaceHolderIcon({
     className,
     ...props
 }: EmptyPlaceholderIconProps) {
-    const Icon = Icons[name]
+    const Icon = Icons[name] as LucideIcon || null
 
     if (!Icon) {
         return null
