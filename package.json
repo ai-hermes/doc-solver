@@ -14,7 +14,7 @@
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "demo": "node demos/pdf.cjs",
     "ingest-data": "tsx -r dotenv/config demos/db-demo.ts",
-    "postinstall": "husky install",
+    "postinstall": "husky install && patch-package",
     "lint-staged": "lint-staged"
   },
   "overrides": {
@@ -121,6 +121,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
+    "patch-package": "^8.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "prisma": "^5.8.0",
