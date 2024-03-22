@@ -23,9 +23,9 @@ export function DocumentItem({...props}: DocumentItemProps) {
         >
             <div className={`flex items-center text-base font-semibold`}>
                 <Icons.pdf className="w-5 mr-0.5 shrink-0"></Icons.pdf>
-                <div className={`${styles.title}`}>{show_name}</div>
+                <div className={`${styles.ellipsis}`}>{show_name}</div>
             </div>
-            <div>{moment(created_at).format()}</div>
+            <div className={styles.ellipsis}>{moment(created_at).format()}</div>
         </div>
     )
 }
