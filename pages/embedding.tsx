@@ -43,12 +43,12 @@ export default function Embedding() {
     const { toast } = useToast();
     const [selectedFile, setSelectedFile] = useState<Nullable<File>>();
 
-    const [uploadInfo, setUploadInfo] = useState<{
-        url?: string;
-        key?: string;
-        jobId?: string;
-        jobStatus?: 'created' | 'succeeded' | 'failure';
-    }>({
+    const [uploadInfo, setUploadInfo] = useState<Partial<{
+        url: string;
+        key: string;
+        jobId: string;
+        jobStatus: 'created' | 'succeeded' | 'failure';
+    }>>({
         // url: 'doc-solver-dev-1251009550.cos.ap-shanghai.myqcloud.com/pdf/d6db6fd34c5ea56fa1dc8f55df17830e',
         // key: 'pdf/d6db6fd34c5ea56fa1dc8f55df17830e',
         url: '',
