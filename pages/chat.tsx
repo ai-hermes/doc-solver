@@ -1,15 +1,22 @@
-import React from 'react';
-import ContentLayout from '@/components/content-layout';
+import React, { useEffect } from 'react';
 import { InferGetServerSidePropsType } from 'next';
-import Embedding from './embedding';
+import { useDocumentList } from '@/hooks/use-document';
+import { useRouter } from "next/router"
+
 export default function Home({
     messages: _messages,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    
+    const { documents } = useDocumentList()
+    const router = useRouter()
+
+    useEffect(() => {
+        if(documents?.[0]?.id){
+            router.push(`/chat/${documents?.[0]?.id}`)
+        }
+    }, [router, documents])
+
     return (
-        <ContentLayout>
-            <Embedding />
-        </ContentLayout>
+        <></>
     );
 }
 

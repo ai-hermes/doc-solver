@@ -9,7 +9,7 @@ export function ToUploadButton({ }: ToUploadButtonProps) {
 
     return (
         <div className="flex justify-center items-center p-3">
-            <Button variant={'ghost'} onClick={() => router.push(`/chat`)}>
+            <Button variant={'ghost'} onClick={() => router.push(`/embedding`)}>
                 <Icons.upload className="w-5 mr-1" />
                 Add Files
             </Button>
