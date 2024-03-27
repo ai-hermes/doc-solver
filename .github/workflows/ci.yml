@@ -55,6 +55,8 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} contentlayer build
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - name: Copy Lua file
+        run: cp node_modules/bee-queue/lib/lua/*.lua  .next/standalone/node_modules/bee-queue/lib/lua/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
