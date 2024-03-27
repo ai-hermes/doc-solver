@@ -22,6 +22,7 @@ WORKDIR /app
 RUN mkdir .next
 COPY .next/standalone ./
 COPY .next/static ./.next/static
+COPY node_modules/bee-queue/lib/lua/*.lua  .next/standalone/node_modules/bee-queue/lib/lua/
 COPY scripts ./scripts
 COPY prisma ./prisma
 COPY public ./public
