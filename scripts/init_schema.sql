@@ -6,6 +6,16 @@ CREATE DATABASE IF NOT EXISTS `doc_solver` DEFAULT CHARACTER SET utf8mb4 COLLATE
 
 USE `doc_solver`;
 
+CREATE TABLE IF NOT EXISTS `users`
+(
+    `id`            VARCHAR(191) NOT NULL PRIMARY KEY,
+    `name`          VARCHAR(191) NULL,
+    `email`         VARCHAR(191) NULL,
+    `emailVerified` DATETIME(3)  NULL,
+    `image`         VARCHAR(191) NULL,
+    CONSTRAINT users_email_key UNIQUE (email)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `accounts`
 (
     `id`                VARCHAR(191) NOT NULL PRIMARY KEY,
@@ -24,15 +34,6 @@ CREATE TABLE IF NOT EXISTS `accounts`
     CONSTRAINT accounts_userId_fkey FOREIGN KEY (userId) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `users`
-(
-    `id`            VARCHAR(191) NOT NULL PRIMARY KEY,
-    `name`          VARCHAR(191) NULL,
-    `email`         VARCHAR(191) NULL,
-    `emailVerified` DATETIME(3)  NULL,
-    `image`         VARCHAR(191) NULL,
-    CONSTRAINT users_email_key UNIQUE (email)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `sessions`
 (
@@ -93,6 +94,19 @@ CREATE TABLE IF NOT EXISTS `highlights`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `tasks`
+(
+    `id`          VARCHAR(36)                         NOT NULL PRIMARY KEY,
+    `user_id`     VARCHAR(191)                        NOT NULL,
+    `task_type`   VARCHAR(191)                        NOT NULL,
+    `task_name`   VARCHAR(191)                        NOT NULL,
+    `task_status` VARCHAR(191)                        NOT NULL,
+    `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    `deleted_at`  TIMESTAMP                           NULL,
+    `bq_id`       VARCHAR(191)                        NOT NULL,
+    CONSTRAINT tasks_bq_id_key UNIQUE (bq_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `documents`
 (
@@ -110,16 +124,4 @@ CREATE TABLE IF NOT EXISTS `documents`
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 
-CREATE TABLE IF NOT EXISTS `tasks`
-(
-    `id`          VARCHAR(36)                         NOT NULL PRIMARY KEY,
-    `user_id`     VARCHAR(191)                        NOT NULL,
-    `task_type`   VARCHAR(191)                        NOT NULL,
-    `task_name`   VARCHAR(191)                        NOT NULL,
-    `task_status` VARCHAR(191)                        NOT NULL,
-    `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    `deleted_at`  TIMESTAMP                           NULL,
-    `bq_id`       VARCHAR(191)                        NOT NULL,
-    CONSTRAINT tasks_bq_id_key UNIQUE (bq_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
