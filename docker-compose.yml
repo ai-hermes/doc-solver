@@ -8,7 +8,7 @@ services:
     ports:
     - "3306:3306"
     volumes:
-    # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./scripts/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
     - "${DATA_DIR:-./demos/data}/mysql-data:/var/lib/mysql"
     networks:
     - doc-solver
