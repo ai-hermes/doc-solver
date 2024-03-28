@@ -9,7 +9,7 @@ services:
     - "3306:3306"
     volumes:
     # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    - "${DATA_DIR:./demos/data}/mysql-data:/var/lib/mysql"
+    - "${DATA_DIR:-./demos/data}/mysql-data:/var/lib/mysql"
     networks:
     - doc-solver
 
@@ -26,7 +26,7 @@ services:
     - 8080:8080
     - 50051:50051
     volumes:
-    - "${DATA_DIR:./demos/data}/weaviate-data:/var/lib/weaviate"
+    - "${DATA_DIR:-./demos/data}/weaviate-data:/var/lib/weaviate"
     restart: on-failure:0
     environment:
       QUERY_DEFAULTS_LIMIT: 25
@@ -44,7 +44,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - "${DATA_DIR:./demos/data}/redis-data:/data"
+      - "${DATA_DIR:-./demos/data}/redis-data:/data"
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
