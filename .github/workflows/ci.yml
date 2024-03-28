@@ -2,7 +2,13 @@ name: Build Next.js and Images
 
 on:
   push:
-    tags: [ '**' ]
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
   build-next:
@@ -49,6 +55,8 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} contentlayer build
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - name: Copy Lua file
+        run: cp node_modules/bee-queue/lib/lua/*.lua  .next/standalone/node_modules/bee-queue/lib/lua/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
@@ -104,7 +112,7 @@ jobs:
         run: tar xf ./.next/artifact.tar -C ./.next
       
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -113,8 +121,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: warjiang/doc-solver-web
-          tags: type=match,pattern=\d.\d.\d
+          images: hermesai/doc-solver-web
 
       - name: Build and push the Docker image
         uses: docker/build-push-action@v5
@@ -146,7 +153,7 @@ jobs:
           exit 1
       
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -155,8 +162,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: warjiang/doc-solver-worker
-          tags: type=match,pattern=\d.\d.\d
+          images: hermesai/doc-solver-worker
 
       - name: Build and push the Docker image
         uses: docker/build-push-action@v5

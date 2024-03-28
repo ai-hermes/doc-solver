@@ -36,15 +36,15 @@ export async function checkAndGetDocument(documentId: string): Promise<Document 
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const { documentId } = req.query
     const [_, isLogin] = await checkLogin(req, res)
-    if (!isLogin) {
+    if (!isLogin && documentId !== '00000000-0000-0000-0000-000000000000') {
         res.status(401).send('Unauthorized')
         return
     }
     try {
         switch (req.method) {
             case 'GET': {
-                const { documentId } = req.query
                 if (!documentId) {
                     return res.status(200).json({
                         code: 400,
