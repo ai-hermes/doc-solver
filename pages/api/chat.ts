@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { JsonObject } from '@prisma/client/runtime/library';
 import { getWeaviateClient } from '@/utils/weaviate-client';
 import { getOpenAIChat, getOpenAIEmbeddings } from '@/utils/llm';
-import { WeaviateStore } from 'langchain/vectorstores/weaviate';
+import { WeaviateFilter, WeaviateStore } from 'langchain/vectorstores/weaviate';
 import { ChatWithRedisMemory } from '@/utils/chatWithRedisMemory';
 import { v4 as uuidv4 } from 'uuid';
 import { getRedisClient } from '@/lib/clients/redis';
@@ -78,10 +78,15 @@ export default async function handler(
             ]
         })
         const chatId = `${uId}_${documentId}`
+        // prior to v1.14 only `certainty` is available, https://weaviate.io/developers/weaviate/config-refs/distances
+        // TODO, here we can pass only distance field without where clause
         const qaClient = new ChatWithRedisMemory(
             getOpenAIChat(),
-            vectorStore.asRetriever(),
-            chatId
+            vectorStore.asRetriever(3, {
+                distance: 0.2
+            } as WeaviateFilter),
+            chatId,
+            indexName,
         );
         const chain = qaClient.getChain()
         if (!chain) {
@@ -103,55 +108,55 @@ export default async function handler(
         }
 
         const sourceDocuments = qaClient.getRelavantDocs()
-
-        const uuids = sourceDocuments.map(d => d.metadata['chunkId']).filter(Boolean);
-        const prismaClient = getPrismaClient()
-        const hs = await prismaClient.chunkLine.findMany({
-            select: {
-                rect_info: true,
-                content: true,
-                chunk_id: true,
-                origin_info: true,
-            },
-            where: {
-                chunk_id: {
-                    in: uuids
+        // we can stop early
+        if (sourceDocuments.length > 0) {
+            const uuids = sourceDocuments.map(d => d.metadata['chunkId']).filter(Boolean);
+            const prismaClient = getPrismaClient()
+            const hs = await prismaClient.chunkLine.findMany({
+                select: {
+                    rect_info: true,
+                    content: true,
+                    chunk_id: true,
+                    origin_info: true,
+                },
+                where: {
+                    chunk_id: {
+                        in: uuids
+                    }
                 }
-            }
-        })
-        const hsWithPageNumber = hs.map(h => {
-            const pageNumber = (h.origin_info as JsonObject)?.['pageNumber'] as number;
-            return {
-                ...h,
-                pageNumber,
-            }
-        })
-        const groupedHs = _.groupBy(hsWithPageNumber, 'chunk_id');
-        const sourceDocumentsWithHs = sourceDocuments.map(s => {
-            return {
-                ...s,
-                highlight: groupedHs[s.metadata['chunkId']]
-            }
-        })
+            })
+            const hsWithPageNumber = hs.map(h => {
+                const pageNumber = (h.origin_info as JsonObject)?.['pageNumber'] as number;
+                return {
+                    ...h,
+                    pageNumber,
+                }
+            })
+            const groupedHs = _.groupBy(hsWithPageNumber, 'chunk_id');
+            const sourceDocumentsWithHs = sourceDocuments.map(s => {
+                return {
+                    ...s,
+                    highlight: groupedHs[s.metadata['chunkId']]
+                }
+            })
+            const hsUuid = uuidv4();
+            await prismaClient.highlight.create({
+                data: {
+                    id: hsUuid,
+                    hs_data: JSON.stringify(sourceDocumentsWithHs),
+                }
+            })
+            const redisClient = getRedisClient()
+            const str = await redisClient.lindex(chatId, 0)
+            const data = JSON.parse(str || '{}')
+            _.set(data, 'data.hs', hsUuid)
+            redisClient.lset(chatId, 0, JSON.stringify(data))
 
-
-        const hsUuid = uuidv4();
-        await prismaClient.highlight.create({
-            data: {
-                id: hsUuid,
-                hs_data: JSON.stringify(sourceDocumentsWithHs),
-            }
-        })
-        const redisClient = getRedisClient()
-        const str = await redisClient.lindex(chatId, 0)
-        const data = JSON.parse(str || '{}')
-        _.set(data, 'data.hs', hsUuid)
-        redisClient.lset(chatId, 0, JSON.stringify(data))
-
-        res.write(`data: ${JSON.stringify({
-            type: 'hs',
-            highlights: sourceDocumentsWithHs,
-        })}\n\n`);
+            res.write(`data: ${JSON.stringify({
+                type: 'hs',
+                highlights: sourceDocumentsWithHs,
+            })}\n\n`);
+        }
         res.write(`data: [DONE]\n\n`);
         res.end()
     } catch (err) {

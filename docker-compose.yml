@@ -8,8 +8,8 @@ services:
     ports:
     - "3306:3306"
     volumes:
-    # - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    - ./demos/data/mysql-data:/var/lib/mysql
+    - ./scripts/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+    - "${DATA_DIR:-./demos/data}/mysql-data:/var/lib/mysql"
     networks:
     - doc-solver
 
@@ -21,12 +21,12 @@ services:
     - '8080'
     - --scheme
     - http
-    image: "${REGISTRY:-docker.io}/semitechnologies/weaviate:1.23.0"
+    image: "${REGISTRY:-cr.weaviate.io}/semitechnologies/weaviate:1.24.5"
     ports:
     - 8080:8080
     - 50051:50051
     volumes:
-    - ./demos/data/weaviate-data:/var/lib/weaviate
+    - "${DATA_DIR:-./demos/data}/weaviate-data:/var/lib/weaviate"
     restart: on-failure:0
     environment:
       QUERY_DEFAULTS_LIMIT: 25
@@ -44,13 +44,15 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./demos/data/redis-data:/data
+      - "${DATA_DIR:-./demos/data}/redis-data:/data"
     command: redis-server --requirepass docsolver123456
     networks:
       - doc-solver
+
   web:
-    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver:canary"
+    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-web:v0.1.25"
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
+    # entrypoint: ["sleep", "infinity"]
     cap_add:
      - SYS_PTRACE
     security_opt:
@@ -59,24 +61,20 @@ services:
      - "3000:3000"
     environment:
       - TZ=Asia/Shanghai
-      - GITHUB_ACTIONS=true
-    env_file:
-      - .env.prod
-    # volumes:
-    #   - .env.prod:/app/.env
-    #   - ./scripts/bootstrap.sh:/app/scripts/bootstrap.sh
+    volumes:
+      - .env:/app/.env
     depends_on:
       - mysql
     networks:
       - doc-solver
+
   worker:
-    image: "${REGISTRY:-docker.io}/ai-hermes/doc-solver-worker:0.1.9"
+    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-worker:v0.1.25"
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
-    # entrypoint: ["/bin/bash", "-c","sleep infinity"]
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - .env.prod:/app/.env
+      - .env:/app/.env
     depends_on:
       - mysql
       - redis

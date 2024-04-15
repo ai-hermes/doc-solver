@@ -17,6 +17,8 @@ import { QA_TEMPLATE, CONDENSE_TEMPLATE } from "./makechain";
 import { serializeChatHistory } from "./llm";
 import { Nullable } from "@/typings";
 import { generateRedisUrl } from "./redis-client";
+import { getPrismaClient } from "@/lib/clients/prisma";
+import { PrismaClient } from "@prisma/client";
 
 
 interface PromptContextData {
@@ -29,6 +31,8 @@ interface PromptContextData {
 
 export class ChatWithRedisMemory {
     private chatId: string;
+    private indexName: string;
+    private prismaClient: PrismaClient;
     private memory: BaseMemory;
     private qaTemplate: PromptTemplate;
     private condenseTemplate: PromptTemplate;
@@ -41,10 +45,13 @@ export class ChatWithRedisMemory {
         // eslint-disable-next-line no-use-before-define
         private retriever: VectorStoreRetriever = retriever,
         chatId: string = '',
+        indexName: string = '',
         private qaTemplateStr: string = QA_TEMPLATE,
         private condenseTemplateStr: string = CONDENSE_TEMPLATE,
     ) {
         this.chatId = chatId || uuidv4();
+        this.indexName = indexName;
+        this.prismaClient = getPrismaClient()
         this.memory = new BufferMemory({
             memoryKey: "chat_history",
             chatHistory: new RedisChatMessageHistory({
@@ -69,10 +76,33 @@ export class ChatWithRedisMemory {
                     const relevantDocs = await this.retriever.getRelevantDocuments(
                         input.question
                     );
-                    // store documents temporarily
-                    this.relevantDocs = relevantDocs
-                    const serialized = formatDocumentsAsString(relevantDocs);
-                    return serialized;
+                    if (relevantDocs.length === 0) {
+                        const chunks = await this.prismaClient.chunk.findMany({
+                            where: {
+                                attribute: {
+                                    path: '$.indexName',
+                                    equals: this.indexName,
+                                }
+                            }
+                        })
+                        const content = chunks
+                            .sort((a, b) => {
+                                const wa = (a.attribute as { innerChunkNo: number }).innerChunkNo
+                                const wb = (b.attribute as { innerChunkNo: number }).innerChunkNo
+                                return wa - wb
+                            })
+                            .map(c => {
+                                return c.content
+                            })
+                            .join("");
+                        return content.slice(0, 3000)
+                    } else {
+                        // store documents temporarily
+                        this.relevantDocs = relevantDocs
+                        const serialized = formatDocumentsAsString(relevantDocs);
+                        return serialized;
+                    }
+
                 },
             },
             this.handleProcessQuery.bind(this),
