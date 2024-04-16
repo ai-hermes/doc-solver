@@ -12,8 +12,8 @@ import { userAuthSchema } from "@/lib/validations/auth"
 import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/shared/icons"
+import { toast } from "@/components/ui/use-toast"
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
     type?: string
@@ -44,7 +44,6 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
 
         setIsLoading(false)
 
-        // TODO: replace shadcn toast by react-hot-toast
         if (!signInResult?.ok) {
             return toast({
                 title: "Something went wrong.",

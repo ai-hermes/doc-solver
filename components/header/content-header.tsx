@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserAccountNav } from "@/components/layout/user-account-nav";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
 import { Icons } from "@/components/shared/icons"
@@ -8,6 +8,7 @@ import { siteConfig } from "@/config/site"
 import useScroll from "@/hooks/use-scroll";
 import { useSession } from "next-auth/react";
 import styles from './content-header.module.css';
+import { LogoutButton } from '../logout-button';
 
 interface LayoutProps {
     rightElements?: React.ReactNode
@@ -54,12 +55,7 @@ export function ContentHeader({
                     {user && (
                         <>
                             <UserAccountNav user={user} />
-                            <Button
-                                className="px-3"
-                                variant="outline" size="sm"
-                                onClick={() => { }}>
-                                logout
-                            </Button>
+                            <LogoutButton />
                         </>
                     )}
                 </div>

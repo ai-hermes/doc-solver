@@ -75,6 +75,7 @@ export const Icons = {
     laptop: Laptop,
     logo: ({...props}) => (
         <Image 
+            {...props}
             alt="" 
             src='/logo.svg' 
             width={props.width ?? 28} 
