@@ -72,6 +72,7 @@
     "next-auth": "^4.24.5",
     "next-contentlayer": "^0.3.4",
     "next-themes": "^0.2.1",
+    "nodemailer": "^6.9.13",
     "openai": "^4.17.4",
     "pdf-parse": "1.1.1",
     "pdfjs-dist": "2.16.105",
