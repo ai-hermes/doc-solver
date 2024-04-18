@@ -292,7 +292,6 @@ export default function Home({
         updateHash(mappedHighlight[0])
     }
 
-
     return (
         <ContentLayout>
             <div className="w-full mx-auto flex flex-col gap-4">
