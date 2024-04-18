@@ -199,7 +199,7 @@ export default function Embedding() {
                                                 toast({
                                                     description: data.message,
                                                 })
-                                                queryClient.invalidateQueries("documents")
+                                                queryClient.invalidateQueries({queryKey: ["documents"]})
                                             } else {
                                                 toast({
                                                     variant: 'destructive',
