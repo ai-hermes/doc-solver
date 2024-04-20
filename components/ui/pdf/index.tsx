@@ -108,6 +108,11 @@ class App extends Component<Props, State> {
         }
     }
 
+    // update props
+    static getDerivedStateFromProps(props: Props) {
+        return { ...props };
+    }
+
     resetHighlights = () => {
         this.setState({
             highlights: [],

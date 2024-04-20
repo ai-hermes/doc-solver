@@ -1,7 +1,9 @@
 import React from "react";
-import "./index.module.css";
+import styles from './index.module.css';
+import { cn } from "@/lib/utils";
 
 export function Spinner() {
+
   return (
     <div
       style={{
@@ -10,19 +12,19 @@ export function Spinner() {
         height: "100vh",
       }}
     >
-      <div className="sk-fading-circle">
-        <div className="sk-circle1 sk-circle" />
-        <div className="sk-circle2 sk-circle" />
-        <div className="sk-circle3 sk-circle" />
-        <div className="sk-circle4 sk-circle" />
-        <div className="sk-circle5 sk-circle" />
-        <div className="sk-circle6 sk-circle" />
-        <div className="sk-circle7 sk-circle" />
-        <div className="sk-circle8 sk-circle" />
-        <div className="sk-circle9 sk-circle" />
-        <div className="sk-circle10 sk-circle" />
-        <div className="sk-circle11 sk-circle" />
-        <div className="sk-circle12 sk-circle" />
+      <div className={styles['sk-fading-circle']}>
+        <div className={cn(styles['sk-circle1'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle2'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle3'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle4'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle5'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle6'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle7'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle8'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle9'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle10'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle11'], styles['sk-circle'])} />
+        <div className={cn(styles['sk-circle12'], styles['sk-circle'])} />
       </div>
     </div>
   );

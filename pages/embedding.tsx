@@ -13,6 +13,7 @@ import { Stepper,StepperItem } from "@/components/ui/stepper";
 import { useToast } from "@/components/ui/use-toast";
 import ContentLayout from '@/components/content-layout';
 import { Progress } from "@/components/ui/progress"
+import { useQueryClient } from '@tanstack/react-query'
 
 const steps = [
     { id: 1, label: "Step 1: Select pdf file (.pdf, .txt, or .doc suffixes only and limit 5M)" },
@@ -40,6 +41,7 @@ const cos = new COS({
 })
 // cos.putBucket()
 export default function Embedding() {
+    const queryClient = useQueryClient()
     const { toast } = useToast();
     const [selectedFile, setSelectedFile] = useState<Nullable<File>>();
 
@@ -197,6 +199,7 @@ export default function Embedding() {
                                                 toast({
                                                     description: data.message,
                                                 })
+                                                queryClient.invalidateQueries({queryKey: ["documents"]})
                                             } else {
                                                 toast({
                                                     variant: 'destructive',

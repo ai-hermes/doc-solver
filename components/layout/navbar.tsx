@@ -5,9 +5,10 @@ import { MainNavItem } from "@/types";
 import { User } from "next-auth";
 import { MainNav } from "./main-nav";
 import { UserAccountNav } from "./user-account-nav";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/utils/cn";
+import { LogoutButton } from '../logout-button';
 // import { useSigninModal } from "@/hooks/use-signin-modal";
 
 interface NavBarProps {
@@ -49,12 +50,7 @@ export function NavBar({ className, user, items, children, rightElements, scroll
                     {user && (
                         <>
                             <UserAccountNav user={user} />
-                            <Button
-                                className="px-3"
-                                variant="outline" size="sm"
-                                onClick={() => { }}>
-                                logout
-                            </Button>
+                            <LogoutButton />
                         </>
                     )}
                 </div>
