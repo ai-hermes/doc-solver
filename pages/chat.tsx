@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { InferGetServerSidePropsType } from 'next';
 import { useDocumentList } from '@/hooks/use-document';
 import { useRouter } from "next/router"
+import Embedding from './embedding';
 
 export default function Home({
     messages: _messages,
@@ -16,7 +17,7 @@ export default function Home({
     }, [router, documents])
 
     return (
-        <></>
+        <Embedding />
     );
 }
 

@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ContentLayout from '@/components/content-layout';
 import { Progress } from "@/components/ui/progress"
 import { useQueryClient } from '@tanstack/react-query'
+import { useSession } from 'next-auth/react';
 
 const steps = [
     { id: 1, label: "Step 1: Select pdf file (.pdf, .txt, or .doc suffixes only and limit 5M)" },
@@ -41,6 +42,7 @@ const cos = new COS({
 })
 // cos.putBucket()
 export default function Embedding() {
+    const { data: session } = useSession()
     const queryClient = useQueryClient()
     const { toast } = useToast();
     const [selectedFile, setSelectedFile] = useState<Nullable<File>>();
@@ -115,6 +117,13 @@ export default function Embedding() {
                             <Button
                                 disabled={!selectedFile}
                                 onClick={async () => {
+                                    if(!session?.user) {
+                                        return toast({
+                                            title: "Permission Error.",
+                                            description: "login first please ~",
+                                            variant: "destructive",
+                                        })
+                                    }
                                     if (!selectedFile) return
                                     const buffer = await readFileAsync(selectedFile)
                                     if (!buffer) return
