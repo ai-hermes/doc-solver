@@ -28,17 +28,9 @@ export default async function handler(
     res.setHeader('Content-Encoding', 'none');
 
     const { question, language = "english", documentId } = req.body;
+    
+    const [user] = await checkLogin(req, res)
 
-
-    const [user, isLogin] = await checkLogin(req, res)
-    if (!isLogin) {
-        res.status(200)
-            .json({
-                code: 400,
-                message: `unauthorized user`
-            })
-        return;
-    }
     for (const key of ['question', 'documentId']) {
         if (!req.body[key]) {
             res.status(200)
@@ -59,7 +51,6 @@ export default async function handler(
     }
     // OpenAI recommends replacing newlines with spaces for best results
     const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
-
 
 
     try {

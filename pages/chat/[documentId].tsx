@@ -59,6 +59,8 @@ export default function Home({
     const documentId = router.query.documentId as string
     const { document } = useDocumentDetail(documentId)
     const { messages: chatHistory } = useChatHistory(documentId)
+    const placeHolder = 'Please summarize the content';
+
     useEffect(() => {
         if (!chatHistory || chatHistory.length === 0) {
             return
@@ -99,12 +101,7 @@ export default function Home({
 
         setError(null);
 
-        if (!query) {
-            alert('Please input a question');
-            return;
-        }
-
-        const question = query.trim();
+        const question = query.trim() ?? placeHolder;
         const source = new SSE('/api/chat', {
             headers: {
                 'Content-Type': 'application/json',
@@ -405,7 +402,7 @@ export default function Home({
                                             placeholder={
                                                 loading
                                                     ? 'Waiting for response...'
-                                                    : 'Please summarize the content'
+                                                    : placeHolder
                                             }
                                             value={query}
                                             onChange={(e) => setQuery(e.target.value)}
