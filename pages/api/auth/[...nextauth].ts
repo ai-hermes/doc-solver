@@ -8,6 +8,7 @@ import EmailProvider from "next-auth/providers/email"
 import { env } from "@/env.mjs"
 import { randomBytes, randomUUID } from "crypto"
 import { Adapter } from "next-auth/adapters"
+import { sendVerificationRequest } from '@/components/sendVerificationRequest';
 
 const prisma = getPrismaClient()
 export const authOptions = {
@@ -27,7 +28,8 @@ export const authOptions = {
         }),
         EmailProvider({
             server: process.env.EMAIL_SERVER,
-            from: process.env.EMAIL_FROM
+            from: process.env.EMAIL_FROM,
+            sendVerificationRequest,
         }),
         // ...add more providers here
     ],
