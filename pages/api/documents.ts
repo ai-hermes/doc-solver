@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getPrismaClient } from '@/lib/clients/prisma';
 import { checkLogin } from './user';
 
+const defaultUserId = '0000000000000000000000000';
 
 async function getDocumentsByUser(userId: string) {
     return getPrismaClient().document.findMany({
@@ -29,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [user, isLogin] = await checkLogin(req, res)
     let userId = '';
     if (!isLogin) {
-        userId = '0000000000000000000000000'
+        userId = defaultUserId
     } else {
         userId = user!.id;
     }
@@ -37,7 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         switch (req.method) {
             case 'GET': {
-                const documents = await getDocumentsByUser(userId);
+                let documents = await getDocumentsByUser(userId);
+                if(!documents?.length) {
+                    documents = await getDocumentsByUser(defaultUserId)
+                } 
                 return res.status(200).json({
                     code: 200,
                     data: documents
