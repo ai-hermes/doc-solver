@@ -50,7 +50,7 @@ services:
       - doc-solver
 
   web:
-    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-web:v0.1.28"
+    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-web:v0.1.29"
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.sh"]
     # entrypoint: ["sleep", "infinity"]
     cap_add:
@@ -69,7 +69,7 @@ services:
       - doc-solver
 
   worker:
-    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-worker:v0.1.28"
+    image: "${REGISTRY:-docker.io}/hermesai/doc-solver-worker:v0.1.29"
     entrypoint: ["/bin/sh", "-c","./scripts/bootstrap.worker.sh"]
     environment:
       - TZ=Asia/Shanghai
