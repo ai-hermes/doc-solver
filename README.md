@@ -89,10 +89,6 @@ In general, keep an eye out in the `issues` and `discussions` section of this re
 
 Frontend of this repo is inspired by 
 - [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
-- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
-- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
-- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
-- [langchain-chat-nextjs](https://github.com/zahidkhawaja/langchain-chat-nextjs)
 
 
 ## Contributors ♥️
@@ -103,4 +99,4 @@ Frontend of this repo is inspired by
 
 ## License
 
-Licensed under the MIT License, Copyright © 2021-present doc-solver
+Licensed under the APACHE License, Copyright © 2021-present doc-solver
