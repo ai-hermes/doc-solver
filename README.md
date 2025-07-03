@@ -97,6 +97,10 @@ Frontend of this repo is inspired by
   <img src="https://contrib.rocks/image?repo=ai-hermes/doc-solver&max=400&columns=20" />
 </a>
 
+## Credits
+本项目 CDN 加速及安全防护由 [Tencent EdgeOne](https://edgeone.ai/zh?from=github) 赞助
+![Tencent EdgeOne](https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png)
+
 ## License
 
 Licensed under the APACHE License, Copyright © 2021-present doc-solver
