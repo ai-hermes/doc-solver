@@ -6,6 +6,8 @@
 1. start all the infrastructure needed for this project: `docker-compose up -d`. After the execution, you can check the status of the containers by `docker-compose ps`, it will look like this:
 ![docker-compose-example.png](./images/docker-compose-example.png)
 
+    > Upgrading Weaviate with existing data: Weaviate only supports upgrading one minor version at a time, so starting 1.39 directly on a `weaviate-data` directory written by an older image (for example 1.24) is not supported. Either step through each minor version (1.25, 1.26, ... 1.39) before starting the new image, or remove `${DATA_DIR:-./demos/data}/weaviate-data` and upload your documents again. See the [Weaviate migration guide](https://docs.weaviate.io/deploy/migration).
+
 2. install dependencies for doc-solver: `npm install`.(BTW, we'll use devcontainer to develop the code, so you can also use VSCode to develop the code, and the devcontainer will install the dependencies for you.)
 
 3. create a `.env` file in the root directory of project, the fastest way to do this is to copy the `.env.example` file and rename it to `.env`, and then fill in the values of the variables in the `.env` file. The `.env` file will look like this:
